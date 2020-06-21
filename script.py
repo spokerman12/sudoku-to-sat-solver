@@ -46,9 +46,10 @@ class Sudoku():
 
 		variables = {}
 
-		for k in range(N*N**4 + N*N**2 + N**2):
+		for k in range((N**2-1)*N**4 + (N**2-1)*N**2 + N**2):
 			variables[k] = 0
 		# print(variables)
+		assert(len(variables.keys()) == N**6)
 		
 
 		completeness_clauses = {}
@@ -58,11 +59,14 @@ class Sudoku():
 				for d in range(N**2):
 					slot += [i*N**4 + j*N**2 + d]
 				completeness_clauses[(i,j)] = slot
+		# print(completeness_clauses)
+		assert(len(completeness_clauses)== N**2 * N**2)
+
 
 		unicity_clauses = {}
 		for coord in completeness_clauses.keys():
 			unicity_clauses[coord] = list(itertools.combinations(completeness_clauses[coord],2))
-		# print(unicity_clauses)
+		assert(len(unicity_clauses)*len(unicity_clauses[(0,0)])==(N**8-N**6)/2)
 
 		column_validity_dict = {}
 		for column in range(N**2):
@@ -100,7 +104,7 @@ class Sudoku():
 		for d in range(N**2):
 			row_validity_clauses[d] = [key[d] for key in list(row_validity_dict.values())]
 			row_validity_clauses[d] = list(itertools.combinations(row_validity_clauses[d],2))	
-		# pprint(row_validity_clauses[0])	
+		# pprint(row_validity_clauses)	
 
 
 		square_validity_dict = {}
@@ -130,6 +134,7 @@ class Sudoku():
 		assert(num_row_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
 		assert(num_square_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
 
+		assert((num_column_clauses+num_row_clauses+num_square_clauses)*N**2 == 3*(N**8-N**6)/2)
 
 if __name__ == '__main__':
 	if len(sys.argv) != 1:
