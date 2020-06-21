@@ -12,8 +12,6 @@ if os.name == 'nt':
 	import colorama
 	colorama.init()
 
-def combinatorial(n,r):
-    return factorial(n) / factorial(r) / factorial(n-r)
 
 class Sudoku():
 
@@ -125,7 +123,7 @@ class Sudoku():
 			square_validity_clauses[d] = [key[d] for key in list(square_validity_dict.values())]
 			square_validity_clauses[d] = list(itertools.combinations(square_validity_clauses[d],2))
 
-
+		# Number of validity clauses
 		num_column_clauses = len(column_validity_clauses[0])*len(column_validity_clauses)
 		num_row_clauses = len(row_validity_clauses[0])*len(row_validity_clauses)
 		num_square_clauses = len(square_validity_clauses[0])*len(square_validity_clauses)
@@ -135,6 +133,47 @@ class Sudoku():
 		assert(num_square_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
 
 		assert((num_column_clauses+num_row_clauses+num_square_clauses)*N**2 == 3*(N**8-N**6)/2)
+
+		non_zeros = np.nonzero(self.grid)
+		sat_variable_list = []
+		for index in zip(list(non_zeros[0]),list(non_zeros[1])):
+			sat_variable = [index[0]*N**4 + index[1]*N**2 + self.grid[index[0],index[1]]]
+			sat_variable_list+=sat_variable
+
+
+		num_clauses = sum([
+			len(completeness_clauses),
+			len(unicity_clauses)*len(unicity_clauses[(0,0)]),
+				(num_column_clauses+num_row_clauses+num_square_clauses)*N**2
+		])
+
+		output = 'p cnf '+str(len(variables.keys()))+' '+str(num_clauses)+'\n'
+
+		# Note that each digit 'd' should get a +1 for this part, as 0's are invalid
+		for elem in sat_variable_list:
+			output+=str(elem)+' 0\n'
+
+		for elem in completeness_clauses.values():
+			output+= ' '.join([str(x+1) for x in elem])+' 0\n'
+
+		for elem in unicity_clauses.values():
+			for pair in elem:
+				output += '-'+str(pair[0]+1)+' -'+str(pair[1]+1)+' 0\n'
+
+		num_column_clauses = len(column_validity_clauses[0])*len(column_validity_clauses)
+		num_row_clauses = len(row_validity_clauses[0])*len(row_validity_clauses)
+		num_square_clauses = len(square_validity_clauses[0])*len(square_validity_clauses)
+
+		for elem in column_validity_clauses.values():
+			for clause in elem:
+				left = ' -'.join(clause[0]) 
+				right = ' -'.join(clause[1])
+				# output = left +
+				# to be continued
+
+		print(output)
+
+
 
 if __name__ == '__main__':
 	if len(sys.argv) != 1:
