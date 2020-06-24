@@ -2,6 +2,7 @@ import sys
 import os
 
 from Sudoku import Sudoku
+from SAT import solve_sat
 
 # Windows needs this to print the colors
 if os.name == 'nt':
@@ -41,8 +42,8 @@ if __name__ == '__main__':
 			sudoku.print()
 
 			# This is where the magic happens
-			# sudoku.to_sat()
-			# sat.solve(sudoku.to_sat())
+			print(sudoku.to_sat()[0:20])
+			solve_sat(sudoku.to_sat())
 
 			# Report Solution as Sudoku
 

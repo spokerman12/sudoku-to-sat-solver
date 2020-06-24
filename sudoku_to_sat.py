@@ -66,7 +66,7 @@ if __name__ == '__main__':
 			sudoku.print()
 			with open(dirname+'/'+filename+str(file_counter),'+w') as file:
 				file.write(sudoku.to_sat())
-			print('^This^ Sudoku Written as SAT to file',filename+'_'+str(file_counter))
+			print('^This^ Sudoku written as SAT to file',filename+'_'+str(file_counter))
 			file_counter+=1
 
 
