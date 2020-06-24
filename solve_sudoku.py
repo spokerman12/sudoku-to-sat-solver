@@ -8,17 +8,18 @@ if os.name == 'nt':
 	import colorama
 	colorama.init()
 
-
 if __name__ == '__main__':
 	if len(sys.argv) != 1:
 		print ("Loading file %s" % (sys.argv[1]))
 	else:
 		print ("No input provided. Cya")
+		sys.exit(1)
 
 	try:
 		file = open(sys.argv[1],"r")
 	except Exception as e:
 		print("Could not load file")
+		sys.exit(1)
 
 
 	for line in file.readlines():
@@ -38,9 +39,11 @@ if __name__ == '__main__':
 					read_line[i] = int(read_line[i])
 			sudoku = Sudoku(read_line,order)
 			sudoku.print()
-			with open('output.txt','w+') as file:
-				file.write(sudoku.to_sat())
-			break
 
+			# This is where the magic happens
+			# sudoku.to_sat()
+			# sat.solve(sudoku.to_sat())
+
+			# Report Solution as Sudoku
 
 
