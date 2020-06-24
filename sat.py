@@ -1,7 +1,7 @@
 import re
 from queue import PriorityQueue
 
-def leer_sat(s) :
+def read_sat(s) :
     A = []
     B = []
         
@@ -60,7 +60,7 @@ def occurrences(var, clauses) :
                 acum += 1
     #print(var, ok1, ok2, acum)
 
-def solve_sat(nvars, clauses, values=set(), cola=None) :
+def ssat(nvars, clauses, values=set(), cola=None) :
     #print(clauses)
     if len(clauses) == 0 :
         for i in range(nvars) :
@@ -85,24 +85,27 @@ def solve_sat(nvars, clauses, values=set(), cola=None) :
                 simple = simplify(v, clauses)
                 values.add(v)
                 #print(v)
-                r = solve_sat(nvars, simple, values)
+                r = ssat(nvars, simple, values)
                 if r : return r
     return None
 
-def solved_sat(w) :
-    r = solve_sat(w[0], w[1])
-    if r :
-        return "s cnf 1 " + str(w[0]) + "\n" + "\n".join(["v "+str(v) for v in r])
+def format_sat(instance) :
+    solution = ssat(instance[0], instance[1])
+    if solution :
+        return "s cnf 1 " + str(instance[0]) + "\n" + "\n".join(["v "+str(v) for v in solution])
     else :
-        return "s cnf 0 " + str(w[0])
+        return "s cnf 0 " + str(instance[0])
+
+def solve_sat(s) :
+    output = ""
+    for instance in read_sat(s) :
+        output += format_sat(instance) + "\n"
+    return output
 
 if __name__ == '__main__':
     s =  "c perro\np 5 5\n 2 -4\n 4\n-3\n"
     #s = ""
     s += "c perro\np 5 5\n-4\n4\n-3"
     ss = "c gato"
-    for w in leer_sat(s) :
-        #print(w)
-        ss += "\n" + solved_sat(w)
-    print(ss)
+    print(solve_sat(s))
     
