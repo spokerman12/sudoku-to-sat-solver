@@ -6,7 +6,7 @@ def read_sat(s) :
     B = []
         
     for line in s.split("\n") :
-        if len(line) == 0 :
+        if len(line) == 0 : continue
         if line[0] == "c" : continue
         elif line[0] == "p" :
             read_line = line[2:].strip('\n')
