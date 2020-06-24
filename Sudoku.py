@@ -1,9 +1,17 @@
 import itertools
+import os
+
 import numpy as np
 
 from termcolor import colored
 from pprint import pprint
 from math import factorial
+
+
+# Windows needs this to print the colors
+if os.name == 'nt':
+	import colorama
+	colorama.init()
 
 class Sudoku():
 
@@ -126,6 +134,7 @@ class Sudoku():
 
 		assert((num_column_clauses+num_row_clauses+num_square_clauses)*N**2 == 3*(N**8-N**6)/2)
 
+		# Writes non-zeros as conjunctions
 		non_zeros = np.nonzero(self.grid)
 		sat_variable_list = []
 		for index in zip(list(non_zeros[0]),list(non_zeros[1])):
@@ -141,10 +150,11 @@ class Sudoku():
 
 		output = 'p cnf '+str(len(variables.keys()))+' '+str(num_clauses)+'\n'
 
-		# Note that each digit 'd' should get a +1 for this part, as 0's are invalid
+		# No need for +1 here as it comes from the Sudoku string
 		for elem in sat_variable_list:
 			output+=str(elem)+' 0\n'
 
+		# From here onwards each digit 'd' should get a +1, as 0's are invalid
 		for elem in completeness_clauses.values():
 			output+= ' '.join([str(x+1) for x in elem])+' 0\n'
 
