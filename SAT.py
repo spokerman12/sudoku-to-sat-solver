@@ -10,7 +10,7 @@ def read_sat(s) :
         elif line[0] == "p" :
             read_line = line[2:].strip('\n')
             result = re.findall(r'[^\s]+', read_line)
-            B.append(int(result[0]))
+            B.append(int(result[1]))
             A.append([])
         else :
             result = [int(i) for i in re.findall(r'[^\s]+', line)]
@@ -103,9 +103,9 @@ def solve_sat(s) :
     return output
 
 if __name__ == '__main__':
-    s =  "c perro\np 5 5\n 2 -4\n 4\n-3\n"
+    s =  "c perro\np cnf 5 5\n 2 -4\n 4\n-3\n"
     #s = ""
-    s += "c perro\np 5 5\n-4\n4\n-3"
+    s += "c perro\np cnf 5 5\n-4\n4\n-3"
     ss = "c gato"
     print(solve_sat(s))
     
