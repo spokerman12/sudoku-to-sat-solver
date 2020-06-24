@@ -81,9 +81,8 @@ class Sudoku():
 
 		column_validity_clauses = {}
 		for d in range(N**2):
-			column_validity_clauses[d] = [key[d] for key in list(column_validity_dict.values())]
-			column_validity_clauses[d] = list(itertools.combinations(column_validity_clauses[d],2))	
-		# pprint(column_validity_clauses[0])	
+			for clause in column_validity_dict[d]: 
+				column_validity_clauses[d] = list(itertools.combinations(clause,2))	
 
 		row_validity_dict = {}
 		for row in range(N**2):
@@ -100,9 +99,8 @@ class Sudoku():
 
 		row_validity_clauses = {}
 		for d in range(N**2):
-			row_validity_clauses[d] = [key[d] for key in list(row_validity_dict.values())]
-			row_validity_clauses[d] = list(itertools.combinations(row_validity_clauses[d],2))	
-		# pprint(row_validity_clauses)	
+			for clause in row_validity_dict[d]: 
+				row_validity_clauses[d] = list(itertools.combinations(clause,2))			# pprint(row_validity_clauses)	
 
 
 		square_validity_dict = {}
@@ -119,15 +117,16 @@ class Sudoku():
 			square_validity_dict[section] = [array.tolist() for array in np.array_split(square_validity_dict[section],N**2)]
 
 		square_validity_clauses = {}
-		for d in range(N**2):
-			square_validity_clauses[d] = [key[d] for key in list(square_validity_dict.values())]
-			square_validity_clauses[d] = list(itertools.combinations(square_validity_clauses[d],2))
+		for d in list(itertools.product([0,1,2],[0,1,2])):
+			for clause in square_validity_dict[d]: 
+				square_validity_clauses[d] = list(itertools.combinations(clause,2))	
 
 		# Number of validity clauses
 		num_column_clauses = len(column_validity_clauses[0])*len(column_validity_clauses)
 		num_row_clauses = len(row_validity_clauses[0])*len(row_validity_clauses)
-		num_square_clauses = len(square_validity_clauses[0])*len(square_validity_clauses)
+		num_square_clauses = len(square_validity_clauses[(0,0)])*len(square_validity_clauses)
 		
+
 		assert(num_column_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
 		assert(num_row_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
 		assert(num_square_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
@@ -156,7 +155,7 @@ class Sudoku():
 
 		# From here onwards each digit 'd' should get a +1, as 0's are invalid
 		for elem in completeness_clauses.values():
-			output+= ' '.join([str(x+1) for x in elem])+' 0\n'
+			output+= ' '.join([str(digit+1) for digit in elem])+' 0\n'
 
 		for elem in unicity_clauses.values():
 			clauses = []
@@ -168,13 +167,11 @@ class Sudoku():
 
 		num_column_clauses = len(column_validity_clauses[0])*len(column_validity_clauses)
 		num_row_clauses = len(row_validity_clauses[0])*len(row_validity_clauses)
-		num_square_clauses = len(square_validity_clauses[0])*len(square_validity_clauses)
+		num_square_clauses = len(square_validity_clauses[(0,0)])*len(square_validity_clauses)
 
 		for elem in column_validity_clauses.values():
 			for clause in elem:
-				left = ['-'+str(digit+1) for digit in clause[0]]
-				right = ['-'+str(digit+1) for digit in clause[1]]
-				demorgan = [str(x[0])+' '+str(x[1]) for x in list(itertools.product(left,right))]
+				demorgan = ['-'+str(x[0]+1)+' '+'-'+str(x[1]+1) for x in list(itertools.permutations(clause))]
 				# print(" 0 ".join(demorgan))
 				output += " 0 ".join(demorgan)+'\n'
 				output += " 0 "+'\n'
@@ -182,19 +179,14 @@ class Sudoku():
 
 		for elem in row_validity_clauses.values():
 			for clause in elem:
-				left = ['-'+str(digit+1) for digit in clause[0]]
-				right = ['-'+str(digit+1) for digit in clause[1]]
-				demorgan = [str(x[0])+' '+str(x[1]) for x in list(itertools.product(left,right))]
+				demorgan = ['-'+str(x[0]+1)+' '+'-'+str(x[1]+1) for x in list(itertools.permutations(clause))]
 				# print(" 0 ".join(demorgan))
 				output += " 0 ".join(demorgan)+'\n'
 				output += " 0 "+'\n'
 
-
 		for elem in square_validity_clauses.values():
 			for clause in elem:
-				left = ['-'+str(digit+1) for digit in clause[0]]
-				right = ['-'+str(digit+1) for digit in clause[1]]
-				demorgan = [str(x[0])+' '+str(x[1]) for x in list(itertools.product(left,right))]
+				demorgan = ['-'+str(x[0]+1)+' '+'-'+str(x[1]+1) for x in list(itertools.permutations(clause))]
 				# print(" 0 ".join(demorgan))
 				output += " 0 ".join(demorgan)+'\n'
 				output += " 0 "+'\n'
