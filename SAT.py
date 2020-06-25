@@ -14,21 +14,25 @@ def read_sat(s) :
             B.append(int(result[1]))
             A.append([])
         else :
-            result = [int(i) for i in re.findall(r'[^\s]+', line)]
+            result = [i for i in re.findall(r'[^\s]+', line)]
             A[-1].append(result)
 
     return [(B[i], A[i]) for i in range(len(A))]
 
 def simplify(var, clauses) :
+    if var[0] == "-" :
+        nvar = var[1:]
+    else :
+        nvar = "-"+var
     i = 0
     while i < len(clauses) :
         j = 0
         while j != len(clauses[i]) :
-            if clauses[i][j] == var :
+            if clauses[i][j] == str(var) :
                 clauses.pop(i)
                 i -= 1
                 break
-            elif clauses[i][j] == -var :
+            elif clauses[i][j] == str(nvar) :
                 if len(clauses[i]) == 1 :
                     clauses.pop(i)
                     i -= 1
@@ -40,12 +44,50 @@ def simplify(var, clauses) :
         i += 1
     return clauses
 
+# supone que se le pasa un entero no negativo
+"""
 def valid(var, clauses) :
+    var = str(var)
+    mvar = "-"+var
+    okpos = True
+    okneg = True
+    valids = []
     for clause in clauses :
-        if len(clause) == 1 and clause[0] == -var :
-            #print("chao", var)
-            return False
-    return True
+        if not(okpos or okneg) : break
+        if len(clause) == 1 :
+            if clause[0] == var :
+                okpos = False
+                #print("chao", var)
+            elif clause[0] == mvar :
+                okneg = False
+                #print("chao", mvar)
+    if okpos : valids.append(var)
+    if okneg : valids.append(mvar)
+    #print(valids, okpos, okneg)
+    return valids
+"""
+def valid(nvars, clauses, values) :
+    valids = set()
+    for i in range(nvars) :
+        i = str(i)
+        ni = "-"+i
+        if i in values or ni in values :
+            continue
+        valids.add(i)
+        valids.add(ni)
+    for clause in clauses :
+        if len(clause) == 1 :
+            var = clause[0]
+            if var[0] == "-" :
+                nvar = var[1:]
+            else :
+                nvar = "-"+var
+                
+            if not var in valids :
+                return set()
+            if nvar in valids :
+                valids.remove(nvar)
+    return valids
 
 def occurrences(var, clauses) :
     ok1 = ok2 = True
@@ -61,14 +103,17 @@ def occurrences(var, clauses) :
                 acum += 1
     #print(var, ok1, ok2, acum)
 
-def ssat(nvars, clauses, values=set(), cola=None) :
-    #print(clauses)
-    if len(clauses) == 0 :
-        for i in range(nvars) :
-            if not i in  values and not -i in values :
-                values.add(i)
+def ssat(nvars, claus, vals=set(), cola=None) :
+    clauses = [i.copy() for i in claus]
+    values = vals.copy()
+    #print(len(values), len(clauses))
+    #print(nvars, clauses, values)
+    #if len(clauses) == 0 :
+    #    for i in range(nvars) :
+    #        if not i in  values and not -i in values :
+    #            values.add(str(i))
     if len(values) == nvars and len(clauses) == 0 :
-        #print("gg", values)
+        #print("gg")
         return values
     """
     if cola is None :
@@ -76,23 +121,40 @@ def ssat(nvars, clauses, values=set(), cola=None) :
         for i in range(nvars) :
             occurrences(i, clauses)
     """
-    for i in range(nvars) :
-        if not(valid(i, clauses)) and not(valid(-i, clauses)) :
-            #print("RIP")
-            return None
-        for v in [i, -i] :
-            if (not v in values) and (not -v in values) :
-                if not valid(v, clauses) : continue
-                simple = simplify(v, clauses)
-                values.add(v)
-                #print(v)
-                r = ssat(nvars, simple, values)
-                if r : return r
+    valids = valid(nvars, clauses, values)
+    #print(valids, clauses)
+    for v in valids :
+        if v[0] == "-" :
+            nv = v[1:]
+        else :
+            nv = '-'+v
+        if not v in values and not nv in values :
+            #print(v, "hola")
+            #if not valid(v, clauses) : continue
+            simple = [i.copy() for i in clauses]
+            simple = simplify(v, simple)
+            values.add(v)
+            r = ssat(nvars, simple, values)
+            if r : return r
+            #print("bachaqueando", v)
+            values.remove(v)
     return None
 
+def verify(solution, clauses) :
+    for clause in clauses :
+        for i in range(len(clause)) :
+            if clause[i] in solution : break
+            if i == len(clause)-1 :
+                return False
+    return True
+        
+
 def format_sat(instance) :
-    solution = ssat(instance[0], instance[1])
+    aaa = [i.copy() for i in instance[1]]
+    solution = ssat(instance[0], instance[1], set())
+    #print(solution, aaa)
     if solution :
+        assert(verify(solution, instance[1]))
         return "s cnf 1 " + str(instance[0]) + "\n" + "\n".join(["v "+str(v) for v in solution])
     else :
         return "s cnf 0 " + str(instance[0])
@@ -106,7 +168,7 @@ def solve_sat(s) :
 if __name__ == '__main__':
     s =  "c perro\np cnf 5 5\n 2 -4\n 4\n-3\n"
     #s = ""
-    s += "c perro\np cnf 5 5\n-4\n4\n-3"
+    s += "c perro\np cnf 5 5\n-4\n4 -2\n-3"
     ss = "c gato"
     print(solve_sat(s))
     

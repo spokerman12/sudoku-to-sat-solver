@@ -42,8 +42,8 @@ if __name__ == '__main__':
 			sudoku.print()
 
 			# This is where the magic happens
-			solve_sat(sudoku.to_sat())
-			break
+			print(solve_sat(sudoku.to_sat()))
+			#break
 
 			# Report Solution as Sudoku
 
