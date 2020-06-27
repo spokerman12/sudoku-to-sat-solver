@@ -48,20 +48,28 @@ class Sudoku():
 
 	# Prints the sudoku
 	def print(self,):
+		output=''
 		for i in range(self.order**2):
 			for j in range(self.order**2):
 				if (i//self.order)%2 == 0:
 					if (j//self.order)%2 == 0:
 						print(colored(self.grid[i,j],'cyan'),' ', end='')
+						output+=str(self.grid[i,j])+' '
 					else:
 						print(colored(self.grid[i,j],'yellow'),' ', end='')
+						output+=str(self.grid[i,j])+' '
 				if (i//self.order)%2 != 0:
 					if (j//self.order)%2 == 0:
 						print(colored(self.grid[i,j],'yellow'),' ', end='')
+						output+=str(self.grid[i,j])+' '
 					else:
 						print(colored(self.grid[i,j],'cyan'),' ', end='')
-			print('') 
+						output+=str(self.grid[i,j])+' '
+			print('')
+			output+='\n' 
 		print('')
+		output+='\n'
+		return output
 
 	# Receives a zChaff solution string and
 	# embeds it into the grid

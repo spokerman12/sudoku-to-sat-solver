@@ -6,6 +6,7 @@ Transforms a Sudoku to a boolean SAT problem and solves it
 - Create a virtualenv, if you care about your current Python installation.
 - Do `pip install -r requirements.txt`
 - Install zChaff from https://www.princeton.edu/chaff/zchaff.html. You may need to fix an import. It's easy.
+- Make sure that the zchaff64 dir is in `~/sudoku-to-sat-solver`
 
 ## Instructions
 
@@ -13,7 +14,7 @@ You can use this program like so:
 
 	python main.py <command> <input_file> <time_limit>
 
-## Expected types of input:
+### Input types:
 
 **SUDOKU file**: A file where each line is formatted like this:
 
@@ -54,3 +55,14 @@ The ∧ / 0's separate each clause. In the file, these can be broken in differen
 ### Time limit:
 
 You can set a timeout value for the algorithm you wish to execute. The default is 100 seconds.
+
+
+## About our implementation:
+
+### Our Solver
+
+![alt text](https://github.com/spokerman12/sudoku-to-sat-solver/blob/daniel/comparison.png?raw=true)
+
+### Translating Sudokus to SAT
+
+Thanks to the clauses proposed by the course's teachers, 

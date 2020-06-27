@@ -177,75 +177,83 @@ if __name__ == "__main__":
         #                   zChaff and our solver. Compares results and
         #                   plots them.
         elif sys.argv[1] == "compare_solvers":
-            path_list, sat_sudokus = sudoku_to_sat(file)
-            i = 0
-            zchaff_times = []
-            our_solver_times = []
-            for path in path_list:
-                print("Sudoku #", i)
-                # print("Unsolved")
-                # sat_sudokus[i].print()
-                
-                # zChaff
-                print("Solving with zChaff")
-                start = timer()
-                try: # This block handles timeout and whether it's satisfiable or not
-                    solution = func_timeout(time_limit,solve_sudoku_zchaff,args=(path,time_limit))
-                    if "Unsatisfiable" in solution:
-                        print("Unsatisfiable! Time elapsed:",str(end-start))
-                        continue
-                except FunctionTimedOut:
-                    print ( "Time out.\n")
-                except Exception as e:
-                    print ( "Error occurred,",e)
-                end = timer()
+            report_text = ''
+            with open('report.txt','w') as report:
+                path_list, sat_sudokus = sudoku_to_sat(file)
+                i = 0
+                zchaff_times = []
+                our_solver_times = []
+                for path in path_list:
+                    print("Sudoku #", i)
+                    report_text += "Sudoku #"+' '+str(i)+'\n'
+                    # print("Unsolved")
+                    # sat_sudokus[i].print()
+                    
+                    # zChaff
+                    start = timer()
+                    try: # This block handles timeout and whether it's satisfiable or not
+                        solution = func_timeout(time_limit,solve_sudoku_zchaff,args=(path,time_limit))
+                        if "Unsatisfiable" in solution:
+                            print("Unsatisfiable! Time elapsed:",str(end-start))
+                            report_text += "Unsatisfiable! Time elapsed:"+str(end-start)+'\n'
+                            continue
+                    except FunctionTimedOut:
+                        print("Timed out! Time elapsed:",str(end-start))
+                        report_text += "Timed Out! Time elapsed:"+str(end-start)+'\n'
+                    except Exception as e:
+                        print ( "Error occurred,",e)
+                    end = timer()
 
-                solution = solution.split("Random Seed Used")[0]
-                solution = solution.split("Instance Satisfiable")[1]
-                digit_list = []
-                all_the_digits = re.findall("-?\d+", solution)
+                    solution = solution.split("Random Seed Used")[0]
+                    solution = solution.split("Instance Satisfiable")[1]
+                    digit_list = []
+                    all_the_digits = re.findall("-?\d+", solution)
 
-                for digit in all_the_digits:
-                    if int(digit) > 0:
-                        digit_list.append(int(digit))
-                sudoku = Sudoku()
-                sudoku.solution_from_sat(digit_list)
-                print("zChaff solved in ", str(end - start), "seconds")
-                zchaff_times.append(end-start)
+                    for digit in all_the_digits:
+                        if int(digit) > 0:
+                            digit_list.append(int(digit))
+                    sudoku = Sudoku()
+                    sat_sudokus[i].print()
+                    sudoku.solution_from_sat(digit_list)
+                    print("zChaff solved in ", str(end - start), "seconds")
+                    report_text += "zChaff solved in "+str(end-start)+'seconds\n'
+                    zchaff_times.append(end-start)
 
-                # Our solver
-                print("Solving with our solver")
-                file = open(path,'r')
+                    # Our solver
+                    file = open(path,'r')
 
-                start = timer()
-                # try # This block handles timeout and whether it's satisfiable or not
-                # output = solve_sat_timeout(file.read(),time_limit)
-                # Ver el estado de la solucion
-                end = timer()
-                # all_the_digits = [
-                #     int(x.strip("v ")) + 1 for x in re.findall("v -?\d+", output)
-                # ]
+                    start = timer()
+                    # try # This block handles timeout and whether it's satisfiable or not
+                    # output = solve_sat_timeout(file.read(),time_limit)
+                    # Ver el estado de la solucion
+                    end = timer()
+                    # all_the_digits = [
+                    #     int(x.strip("v ")) + 1 for x in re.findall("v -?\d+", output)
+                    # ]
 
-                # digit_list = []
-                # for digit in all_the_digits:
-                #     if digit > 0:
-                #         digit_list.append(int(digit))                
+                    # digit_list = []
+                    # for digit in all_the_digits:
+                    #     if digit > 0:
+                    #         digit_list.append(int(digit))                
 
-                # sudoku = Sudoku()
-                # sudoku.solution_from_sat(digit_list)
-                print("Our solver solved in ", str(end - start), "seconds")
-                our_solver_times.append(end-start)
+                    # sudoku = Sudoku()
+                    # sudoku.solution_from_sat(digit_list)
+                    print("Our solver solved in ", str(end - start), "seconds")
+                    report_text += "Our solver solved in "+str(end - start)+" seconds\n"
+                    our_solver_times.append(end-start)
 
 
-                # sudoku.print()
+                    report_text += sudoku.print()
 
-                i += 1
+                    i += 1
+                    print('')
 
-            plt.plot(list(range(i)),our_solver_times, label='Our solver')
-            plt.plot(list(range(i)),zchaff_times, label='zChaff')
-            plt.xlabel('Sudoku #')
-            plt.ylabel('Time elapsed in seconds')
-            plt.legend(loc='best')
-            plt.show()
+                plt.plot(list(range(i)),our_solver_times, label='Our solver')
+                plt.plot(list(range(i)),zchaff_times, label='zChaff')
+                plt.xlabel('Sudoku #')
+                plt.ylabel('Time elapsed in seconds')
+                plt.legend(loc='best')
+                plt.savefig('comparison.png')
+                report.write(report_text)
         else:
             print("42")
