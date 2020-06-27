@@ -15,7 +15,7 @@ if os.name == "nt":
     import colorama
     colorama.init()
 
-
+# Solves all the SUDOKU strings on an input file
 def sudoku_to_sat(input_file):
 
     dirname = os.path.split(os.path.abspath(__file__))[0] + "/output"
@@ -52,13 +52,15 @@ def sudoku_to_sat(input_file):
 
     return (path_list, sudoku_list)
 
-
+# Calls up on zChaff to solve a SUDOKU file
 def solve_sudoku_zchaff(path,time_limit):
     cmd = "./zchaff64/zchaff " + path + " "+str(time_limit)
     cmd_output = os.popen(cmd).read()
     return cmd_output
 
-
+# Main procedure.
+# Please refer to README.md for better info on how to use this
+# program.
 if __name__ == "__main__":
     if len(sys.argv) != 1:
         print("Loading file %s" % (sys.argv[2]))

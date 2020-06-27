@@ -1,3 +1,10 @@
+'''
+
+Sudoku class with helper functions
+to translate from and to DIMACS SAT format 
+
+'''
+
 import itertools
 import os
 import re
@@ -7,12 +14,12 @@ from termcolor import colored
 from pprint import pprint
 from math import factorial
 
-
 # Windows needs this to print the colors
 if os.name == 'nt':
 	import colorama
 	colorama.init()
 
+# Helper functions for digit translation
 def find_j(digit):
 	j = 1
 	while True:
@@ -39,7 +46,7 @@ class Sudoku():
 		self.grid = np.array(np.array_split(as_string,order**2)).reshape((order**2,order**2))
 		self.order=order
 
-
+	# Prints the sudoku
 	def print(self,):
 		for i in range(self.order**2):
 			for j in range(self.order**2):
@@ -56,9 +63,10 @@ class Sudoku():
 			print('') 
 		print('')
 
+	# Receives a zChaff solution string and
+	# embeds it into the grid
 	def solution_from_sat(self,sat_string):
 		digit_string = ''
-
 		for digit in sat_string:
 			if digit > 0:
 				i = find_i(digit)
@@ -70,6 +78,8 @@ class Sudoku():
 		self.grid = np.array(np.array_split(list(digit_string),self.order**2)).reshape((self.order**2,self.order**2))
 		return self.grid
 
+	# Receives a DIMACS SAT solution string and
+	# embeds it into the grid
 	def solution_from_output(self,output_string):
 		digit_string = ''
 		print(output_string,len(output_string))
@@ -81,14 +91,11 @@ class Sudoku():
 				if d == 0:
 					d = 9
 				digit_string += str(d)			
-		
-		print(len(digit_string))
-
 		self.grid = np.array(np.array_split(list(digit_string),self.order**2)).reshape((self.order**2,self.order**2))
 		return self.grid
 
-
-
+	# Transforms a SUDOKU string 
+	# into a DIMACS SAT string
 	def to_sat(self):
 		N = int(self.grid.shape[0]**(1/2))
 		if N!=3:
@@ -99,10 +106,9 @@ class Sudoku():
 
 		for k in range((N**2-1)*N**4 + (N**2-1)*N**2 + N**2):
 			variables[k] = 0
-		# print(variables)
 		assert(len(variables.keys()) == N**6)
 		
-
+		# A complete Sudoku board cannot have empty slots
 		completeness_clauses = {}
 		for i in range(N**2):
 			for j in range(N**2):
@@ -110,15 +116,15 @@ class Sudoku():
 				for d in range(N**2):
 					slot += [i*N**4 + j*N**2 + d]
 				completeness_clauses[(i,j)] = slot
-		# print(completeness_clauses)
 		assert(len(completeness_clauses)== N**2 * N**2)
 
-
+		# A complete Sudoku board has only one digit per slot
 		unicity_clauses = {}
 		for coord in completeness_clauses.keys():
 			unicity_clauses[coord] = list(itertools.combinations(completeness_clauses[coord],2))
 		assert(len(unicity_clauses)*len(unicity_clauses[(0,0)])==(N**8-N**6)/2)
 
+		# A complete Sudoku board has no repeating digits in any column
 		column_validity_dict = {}
 		for column in range(N**2):
 			column_validity_dict[column] = []
@@ -139,6 +145,7 @@ class Sudoku():
 				clause_list += list(itertools.combinations(clause,2))	
 			column_validity_clauses[d] = clause_list
 
+		# A complete Sudoku board has no repeating digits in any row
 		row_validity_dict = {}
 		for row in range(N**2):
 			row_validity_dict[row] = []
@@ -156,10 +163,10 @@ class Sudoku():
 		for d in range(N**2):
 			clause_list = []
 			for clause in row_validity_dict[d]: 
-				clause_list += list(itertools.combinations(clause,2))			# pprint(row_validity_clauses)	
+				clause_list += list(itertools.combinations(clause,2))
 			row_validity_clauses[d] = clause_list
 
-
+		# A complete Sudoku board has no repeating digits in any sub-square
 		square_validity_dict = {}
 		for section in list(itertools.product([0,1,2],[0,1,2])):
 			square_validity_dict[section] = []
@@ -185,10 +192,10 @@ class Sudoku():
 		num_row_clauses = len(row_validity_clauses[0])
 		num_square_clauses = len(square_validity_clauses[(0,0)])
 		
+		# Ensuring that we've got all clauses 
 		assert(num_column_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
 		assert(num_row_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
 		assert(num_square_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
-
 		assert((num_column_clauses+num_row_clauses+num_square_clauses)*N**2 == 3*(N**8-N**6)/2)
 
 		# Writes non-zeros as conjunctions
@@ -205,6 +212,7 @@ class Sudoku():
 				(num_column_clauses+num_row_clauses+num_square_clauses)*N**2
 		])
 
+		# Start writing output
 		output = 'p cnf '+str(len(variables.keys()))+' '+str(num_clauses)+'\n'
 
 		# No need for +1 here as it comes from the Sudoku string
@@ -232,27 +240,19 @@ class Sudoku():
 		for elem in column_validity_clauses.values():
 			for clause in elem:
 				demorgan = ['-'+str(x[0]+1)+' '+'-'+str(x[1]+1) for x in list(itertools.permutations(clause))]
-				# print(" 0 ".join(demorgan))
 				output += " 0 ".join(demorgan)+'\n'
 				output += " 0 "+'\n'
-
 
 		for elem in row_validity_clauses.values():
 			for clause in elem:
 				demorgan = ['-'+str(x[0]+1)+' '+'-'+str(x[1]+1) for x in list(itertools.permutations(clause))]
-				# print(" 0 ".join(demorgan))
 				output += " 0 ".join(demorgan)+'\n'
 				output += " 0 "+'\n'
 
 		for elem in square_validity_clauses.values():
 			for clause in elem:
 				demorgan = ['-'+str(x[0]+1)+' '+'-'+str(x[1]+1) for x in list(itertools.permutations(clause))]
-				# print(" 0 ".join(demorgan))
 				output += " 0 ".join(demorgan)+'\n'
 				output += " 0 "+'\n'
 
 		return output
-
-	def from_sat(sat):
-		
-		return

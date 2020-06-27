@@ -1,27 +1,57 @@
-# sudoku-to-sat-solver
+# Sudoku-to-SAT-solver
 Transforms a Sudoku to a boolean SAT problem and solves it 
 
+## Installation:
+- Clone this repository, say in `~/sudoku-to-sat-solver`
+- Create a virtualenv, if you care about your current Python installation.
+- Do `pip install -r requirements.txt`
+- Install zChaff from https://www.princeton.edu/chaff/zchaff.html. You may need to fix an import. It's easy.
 
-Su entrega debe incluir los siguientes programas:
-• Traductor de instancias de Sudoku a instancias de SAT
+## Instructions
 
-sudoku_to_sat.py
+You use this program like this:
 
-• Resolvedor propio de SAT
+	python main.py <command> <input_file> <time_limit>
 
-solve_sat.py
+## Expected types of input:
 
-• Traductor de soluciones de SAT a soluciones de Sudoku
+**SUDOKU file**: A file where each line is formatted like this:
 
-sat_solution_to_sudoku.py
+	3 000400009020980030093000840000000000200008067160300002049000650600003000000059010
 
-Además, debe incluir al menos dos scripts que permita orquestrar los programas implementados.
+Where "3" is the size of the Sudoku board and the rest are the existing digits, read from left to right and top to bottom, 0 being a blank space and the other numbers being themselves.
 
-• Tomar una entrada de Sudoku, traducirla a una entrada de SAT, aplicarle el resolvedor propio de SAT, traducir la solución a una solución de Sudoku y reportar.
+**DIMACS SAT INPUT**: A file formatted like this:
+	
+	c Example file
+	c
+	p cnf 4 3
+	1 3 -4 0
+	4 0 2
+	-3
 
-solve_sudoku.py
+Where:
+- Lines starting with 'c' are comments and will be ignored
+- Lines starting with p contain the form (cnf is the only supported one), number of variables and number of lines
+- Other lines with each variable number, where '-' represents negation and 0 represents conjunction.
 
-• Tomar una entrada de Sudoku, traducirla a una entrada de SAT, aplicarle el resolvedor
-ZCHAFF de SAT, traducir la solución a una solución de Sudoku y reportar.
+This "Example file" represents the boolean expression: φ = (X1 ∨ X3 ∨ ¬X4) ∧ X4 ∧ (X2 ∨ ¬X3).
 
-solve_sudoku_zchaff.py
+The ∧ / 0's separate each clause. In the file, these can be broken in different lines, like in the example.
+
+
+### Commands:
+- sudoku_to_sat:  Takes a file with 'n' SUDOKU strings and produces 'n' DIMACS SAT INPUT files in `output/`
+
+- solve_sat: Takes a DIMACS SAT INPUT file, solves it using our solver and reports the solution as a Sudoku.
+
+- full_solve: Takes a file with 'n' SUDOKU strings, produces 'n' DIMACS SAT INPUT files in `output/`, and solves each of them using our solver. Reports the results.
+
+- full_solve_zchaff: Takes a file with 'n' SUDOKU strings, produces 'n' DIMACS SAT INPUT files in `output/`, and solves each of them using zChaff. Reports the results.
+
+- compare_solvers: Takes a file with 'n' SUDOKU strings, produces 'n' DIMACS SAT INPUT files in `output/`, and solves each of them using both solvers. Reports time.
+
+### Time limit:
+
+You can establish a timeout value for the algorithm you wish to execute.
+
