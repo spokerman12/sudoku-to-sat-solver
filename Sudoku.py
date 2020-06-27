@@ -1,6 +1,6 @@
 import itertools
 import os
-
+import re
 import numpy as np
 
 from termcolor import colored
@@ -13,14 +13,34 @@ if os.name == 'nt':
 	import colorama
 	colorama.init()
 
+def find_j(digit):
+	j = 1
+	while True:
+		if digit < j*3**2:
+			return j-1
+		else:
+			j+=1
+
+def find_i(digit):
+	i = 1
+	while True:
+		if digit < i*3**4:
+			return i-1
+		else:
+			i+=1
+
 class Sudoku():
 
 	def __init__(self, as_string='',order=3):
+		if as_string == '':
+			self.grid = [[]]
+			self.order = 3 # Hardcoded
+			return
 		self.grid = np.array(np.array_split(as_string,order**2)).reshape((order**2,order**2))
 		self.order=order
 
 
-	def print(self):
+	def print(self,):
 		for i in range(self.order**2):
 			for j in range(self.order**2):
 				if (i//self.order)%2 == 0:
@@ -35,6 +55,22 @@ class Sudoku():
 						print(colored(self.grid[i,j],'cyan'),' ', end='')
 			print('') 
 		print('')
+
+	def solution_from_sat(self,sat_string):
+		digit_string = ''
+
+		for digit in sat_string:
+			if digit > 0:
+				i = find_i(digit)
+				j = find_j(digit-i*3**4)
+				d = digit-i*3**4-j*3**2
+				if d == 0:
+					d = 9
+				digit_string += str(d)			
+		self.grid = np.array(np.array_split(list(digit_string),self.order**2)).reshape((self.order**2,self.order**2))
+		return self.grid
+
+
 
 	def to_sat(self):
 		N = int(self.grid.shape[0]**(1/2))
@@ -81,8 +117,10 @@ class Sudoku():
 
 		column_validity_clauses = {}
 		for d in range(N**2):
+			clause_list = []
 			for clause in column_validity_dict[d]: 
-				column_validity_clauses[d] = list(itertools.combinations(clause,2))	
+				clause_list += list(itertools.combinations(clause,2))	
+			column_validity_clauses[d] = clause_list
 
 		row_validity_dict = {}
 		for row in range(N**2):
@@ -99,8 +137,10 @@ class Sudoku():
 
 		row_validity_clauses = {}
 		for d in range(N**2):
+			clause_list = []
 			for clause in row_validity_dict[d]: 
-				row_validity_clauses[d] = list(itertools.combinations(clause,2))			# pprint(row_validity_clauses)	
+				clause_list += list(itertools.combinations(clause,2))			# pprint(row_validity_clauses)	
+			row_validity_clauses[d] = clause_list
 
 
 		square_validity_dict = {}
@@ -118,15 +158,16 @@ class Sudoku():
 
 		square_validity_clauses = {}
 		for d in list(itertools.product([0,1,2],[0,1,2])):
+			clause_list = []
 			for clause in square_validity_dict[d]: 
-				square_validity_clauses[d] = list(itertools.combinations(clause,2))	
+				clause_list += list(itertools.combinations(clause,2))	
+			square_validity_clauses[d] = clause_list
 
 		# Number of validity clauses
-		num_column_clauses = len(column_validity_clauses[0])*len(column_validity_clauses)
-		num_row_clauses = len(row_validity_clauses[0])*len(row_validity_clauses)
-		num_square_clauses = len(square_validity_clauses[(0,0)])*len(square_validity_clauses)
+		num_column_clauses = len(column_validity_clauses[0])
+		num_row_clauses = len(row_validity_clauses[0])
+		num_square_clauses = len(square_validity_clauses[(0,0)])
 		
-
 		assert(num_column_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
 		assert(num_row_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
 		assert(num_square_clauses==int(factorial(N**2)/factorial(2)/factorial(N**2-2))*N**2)
@@ -169,6 +210,8 @@ class Sudoku():
 		num_row_clauses = len(row_validity_clauses[0])*len(row_validity_clauses)
 		num_square_clauses = len(square_validity_clauses[(0,0)])*len(square_validity_clauses)
 
+		i = 0
+
 		for elem in column_validity_clauses.values():
 			for clause in elem:
 				demorgan = ['-'+str(x[0]+1)+' '+'-'+str(x[1]+1) for x in list(itertools.permutations(clause))]
@@ -192,3 +235,7 @@ class Sudoku():
 				output += " 0 "+'\n'
 
 		return output
+
+	def from_sat(sat):
+		
+		return
