@@ -3,7 +3,6 @@ import os
 import sys
 
 from Sudoku import Sudoku
-from SAT import SAT
 
 # Windows needs this to print the colors
 if os.name == 'nt':
@@ -11,15 +10,15 @@ if os.name == 'nt':
 	colorama.init()
 
 
-def sudoku_to_sat(file, filename, write_to_file=False):
+def sudoku_to_sat(input_file):
 
-	if write_to_file:
-		dirname = os.path.split(os.path.abspath(__file__))[0]+'/'+filename
-		os.makedirs(os.path.dirname(dirname), exist_ok=True)
+	dirname = os.path.split(os.path.abspath(__file__))[0]+'/output'
+	os.makedirs(os.path.dirname(dirname), exist_ok=True)
 
+	path_list = []
 	sudoku_list = []
 	file_counter = 0
-	for line in file.readlines():
+	for line in input_file.readlines():
 		if line and line[0].isalnum():
 			order = int(line[0])
 			if order > 6:
@@ -36,28 +35,32 @@ def sudoku_to_sat(file, filename, write_to_file=False):
 				else:
 					read_line[i] = int(read_line[i])
 			sudoku = Sudoku(read_line,order)
+			sudoku_list.append(sudoku)
 			sat_sudoku = sudoku.to_sat()
-			if write_to_file:
-				with open(dirname+'/'+filename+str(file_counter),'+w') as file:
-					file.write(sat_sudoku)
-				print('^This^ Sudoku written as SAT to file',filename+'_'+str(file_counter))
-				file_counter+=1
 		
-			sudoku_list.append(sat_sudoku)
-	return(sudoku_list)
+			with open(dirname+'/output'+str(file_counter),'+w') as output_file:
+				output_file.write(sat_sudoku)
+			print('Sudoku written as SAT to file','output'+str(file_counter))
+			file_counter+=1
+		
+		path_list.append(dirname+'/output'+str(file_counter))
+			
+	return (path_list,sudoku_list)
 
-def solve_sudoku_zchaff(filename):
-	cmd = './zchaff64/zchaff '+sudoku.to_sat()+' 1000'
-	so = os.popen(cmd).read()
-	print(so)
-	# sat.solve(sudoku.to_sat())
-	return
+def solve_sudoku_zchaff(path):
+	cmd = './zchaff64/zchaff '+path+' 1000'
+	cmd_output = os.popen(cmd).read()
+	return cmd_output
+
 def solve_sudoku():
 	return
 def sat_to_sudoku():
 	return
 def solve_sat():
 	return
+
+
+
 
 if __name__ == '__main__':
 	if len(sys.argv) != 1:
@@ -70,23 +73,34 @@ if __name__ == '__main__':
 
 	with open(filename) as file:
 		if sys.argv[1] == 'solve_sudoku':
-			sudoku_list = sudoku_to_sat(file, filename)
-			# print(sudoku_list)
-			for sudoku in sudoku_list:
-				new_sat = SAT()
-				print(new_sat.solve_sat(sudoku))
+			path_list, _ = sudoku_to_sat(file)
+			print(path_list)
+			for sudoku in path_list:
+				# solve sat
+				pass
 
 		elif sys.argv[1] == 'solve_sudoku_zchaff':
-			pass
+			print(solve_sudoku_zchaff(filename))
+
 		elif sys.argv[1] == 'sudoku_to_sat':
-			if len(sys.argv) == 4 and sys.argv[3] == 'save':
-				sudoku_to_sat(file, filename, write_to_file=True)
-			else:
-				sudoku_to_sat(file, filename)
+			path_list, _ = sudoku_to_sat(file)
 
 		elif sys.argv[1] == 'sat_to_sudoku':
 			pass
 		elif sys.argv[1] == 'solve_sat':
+			# solve sat
+			pass
+
+		elif sys.argv[1] == 'full_solve':
+			path_list, sudoku_list = sudoku_to_sat(file)
+			
+			print(path_list)
+			for sudoku in path_list:
+
+				# solve sat
+				pass
+		elif sys.argv[1] == 'full_solve_zchaff':
+			# solve sat
 			pass
 		else:
 			print('42')
