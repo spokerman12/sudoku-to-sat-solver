@@ -9,7 +9,7 @@ Transforms a Sudoku to a boolean SAT problem and solves it
 
 ## Instructions
 
-You use this program like this:
+You can use this program like so:
 
 	python main.py <command> <input_file> <time_limit>
 
@@ -41,17 +41,16 @@ The ∧ / 0's separate each clause. In the file, these can be broken in differen
 
 
 ### Commands:
-- sudoku_to_sat:  Takes a file with 'n' SUDOKU strings and produces 'n' DIMACS SAT INPUT files in `output/`
+- **sudoku_to_sat**:  Takes a file with 'n' SUDOKU strings and produces 'n' DIMACS SAT INPUT files in `output/`
 
-- solve_sat: Takes a DIMACS SAT INPUT file, solves it using our solver and reports the solution as a Sudoku.
+- **solve_sat**: Takes a DIMACS SAT INPUT file, solves it using our solver and reports the solution as a Sudoku.
 
-- full_solve: Takes a file with 'n' SUDOKU strings, produces 'n' DIMACS SAT INPUT files in `output/`, and solves each of them using our solver. Reports the results.
+- **full_solve**: Takes a file with 'n' SUDOKU strings, produces 'n' DIMACS SAT INPUT files in `output/`, and solves each of them using our solver. Reports the results.
 
-- full_solve_zchaff: Takes a file with 'n' SUDOKU strings, produces 'n' DIMACS SAT INPUT files in `output/`, and solves each of them using zChaff. Reports the results.
+- **full_solve_zchaff**: Takes a file with 'n' SUDOKU strings, produces 'n' DIMACS SAT INPUT files in `output/`, and solves each of them using zChaff. Reports the results.
 
-- compare_solvers: Takes a file with 'n' SUDOKU strings, produces 'n' DIMACS SAT INPUT files in `output/`, and solves each of them using both solvers. Reports time.
+- **compare_solvers**: Takes a file with 'n' SUDOKU strings, produces 'n' DIMACS SAT INPUT files in `output/`, and solves each of them using both solvers. Reports time.
 
 ### Time limit:
 
-You can establish a timeout value for the algorithm you wish to execute.
-
+You can set a timeout value for the algorithm you wish to execute. The default is 100 seconds.

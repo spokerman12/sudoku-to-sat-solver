@@ -78,7 +78,7 @@ if __name__ == "__main__":
         except Exception as e:
             print('Could not read time limit',e)
     else:
-        time_limit = 1000
+        time_limit = 100
 
     with open(filename) as file:
 
