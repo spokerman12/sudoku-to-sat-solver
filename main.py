@@ -1,8 +1,11 @@
 # main.pyimport sys
 import os
 import sys
+import re
 
+from time import sleep
 from Sudoku import Sudoku
+from SAT import solve_sat
 
 # Windows needs this to print the colors
 if os.name == 'nt':
@@ -40,10 +43,9 @@ def sudoku_to_sat(input_file):
 		
 			with open(dirname+'/output'+str(file_counter),'+w') as output_file:
 				output_file.write(sat_sudoku)
-			print('Sudoku written as SAT to file','output'+str(file_counter))
-			file_counter+=1
 		
-		path_list.append(dirname+'/output'+str(file_counter))
+			path_list.append(dirname+'/output'+str(file_counter))
+			file_counter+=1
 			
 	return (path_list,sudoku_list)
 
@@ -56,8 +58,9 @@ def solve_sudoku():
 	return
 def sat_to_sudoku():
 	return
-def solve_sat():
-	return
+# def solve_sat(file):
+# 	so
+# 	return
 
 
 
@@ -80,7 +83,18 @@ if __name__ == '__main__':
 				pass
 
 		elif sys.argv[1] == 'solve_sudoku_zchaff':
-			print(solve_sudoku_zchaff(filename))
+			solution = solve_sudoku_zchaff(filename)
+			solution = solution.split('Random Seed Used')[0]
+			solution = solution.split('Instance Satisfiable')[1]
+			digit_list = []
+			all_the_digits = re.findall('-?\d+',solution)
+
+			for digit in all_the_digits:
+				if int(digit) > 0:
+					digit_list.append(int(digit))
+			sudoku = Sudoku()
+			sudoku.solution_from_sat(digit_list)
+			sudoku.print()
 
 		elif sys.argv[1] == 'sudoku_to_sat':
 			path_list, _ = sudoku_to_sat(file)
@@ -88,19 +102,38 @@ if __name__ == '__main__':
 		elif sys.argv[1] == 'sat_to_sudoku':
 			pass
 		elif sys.argv[1] == 'solve_sat':
-			# solve sat
+			solve_sat(sys.argv[2])
 			pass
 
 		elif sys.argv[1] == 'full_solve':
 			path_list, sudoku_list = sudoku_to_sat(file)
-			
-			print(path_list)
 			for sudoku in path_list:
-
+				# print sudoku
 				# solve sat
+				# print solved sat as sudoku
 				pass
 		elif sys.argv[1] == 'full_solve_zchaff':
-			# solve sat
-			pass
+			path_list, sat_sudokus = sudoku_to_sat(file)
+			i = 0 
+			for path in path_list:
+				print('Sudoku #',i)
+				print('Unsolved')
+				sat_sudokus[i].print()
+				solution = solve_sudoku_zchaff(path)
+				solution = solution.split('Random Seed Used')[0]
+				solution = solution.split('Instance Satisfiable')[1]
+				digit_list = []
+				all_the_digits = re.findall('-?\d+',solution)
+
+				for digit in all_the_digits:
+					if int(digit) > 0:
+						digit_list.append(int(digit))
+				sudoku = Sudoku()
+				sudoku.solution_from_sat(digit_list)
+				print("Solved")
+				sudoku.print()
+				break
+
+				i+=1
 		else:
 			print('42')
