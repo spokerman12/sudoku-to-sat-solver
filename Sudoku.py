@@ -70,6 +70,23 @@ class Sudoku():
 		self.grid = np.array(np.array_split(list(digit_string),self.order**2)).reshape((self.order**2,self.order**2))
 		return self.grid
 
+	def solution_from_output(self,output_string):
+		digit_string = ''
+		print(output_string,len(output_string))
+		for digit in output_string:
+			if digit > 0:
+				i = find_i(digit)
+				j = find_j(digit-i*3**4)
+				d = digit-i*3**4-j*3**2
+				if d == 0:
+					d = 9
+				digit_string += str(d)			
+		
+		print(len(digit_string))
+
+		self.grid = np.array(np.array_split(list(digit_string),self.order**2)).reshape((self.order**2,self.order**2))
+		return self.grid
+
 
 
 	def to_sat(self):

@@ -1,6 +1,6 @@
 import re
 from queue import PriorityQueue
-
+from func_timeout import func_timeout, FunctionTimedOut
 def read_sat(s) :
     A = []
     B = []
@@ -164,6 +164,15 @@ def solve_sat(s) :
     for instance in read_sat(s) :
         output += format_sat(instance) + "\n"
     return output
+
+def solve_sat_timeout(s,time_limit):
+    try: 
+        return func_timeout(time_limit,solve_sat,args=(s))
+    except FunctionTimedOut:
+        print ( "Time out.\n")
+    except Exception as e:
+        print ( "Error occurred,",e)
+
 
 if __name__ == '__main__':
     s =  "c perro\np cnf 5 5\n 2 -4\n 4\n-3\n"
