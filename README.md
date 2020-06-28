@@ -62,7 +62,7 @@ You can set a timeout value for the algorithm you wish to execute. The default i
 
 ### Our Solver
 
-![alt text](https://github.com/spokerman12/sudoku-to-sat-solver/blob/daniel/comparison.png?raw=true)
+![alt text](https://github.com/spokerman12/sudoku-to-sat-solver/blob/master/comparison.png?raw=true)
 
 ### Translating Sudokus to SAT
 

@@ -47,27 +47,33 @@ class Sudoku():
 		self.order=order
 
 	# Prints the sudoku
-	def print(self,):
+	def print(self,to_console=False):
 		output=''
 		for i in range(self.order**2):
 			for j in range(self.order**2):
 				if (i//self.order)%2 == 0:
 					if (j//self.order)%2 == 0:
-						print(colored(self.grid[i,j],'cyan'),' ', end='')
+						if to_console:
+							print(colored(self.grid[i,j],'cyan'),' ', end='')
 						output+=str(self.grid[i,j])+' '
 					else:
-						print(colored(self.grid[i,j],'yellow'),' ', end='')
+						if to_console:
+							print(colored(self.grid[i,j],'yellow'),' ', end='')
 						output+=str(self.grid[i,j])+' '
 				if (i//self.order)%2 != 0:
 					if (j//self.order)%2 == 0:
-						print(colored(self.grid[i,j],'yellow'),' ', end='')
+						if to_console:
+							print(colored(self.grid[i,j],'yellow'),' ', end='')
 						output+=str(self.grid[i,j])+' '
 					else:
-						print(colored(self.grid[i,j],'cyan'),' ', end='')
+						if to_console:
+							print(colored(self.grid[i,j],'cyan'),' ', end='')
 						output+=str(self.grid[i,j])+' '
-			print('')
+			if to_console:
+				print('')
 			output+='\n' 
-		print('')
+		if to_console:
+			print('')
 		output+='\n'
 		return output
 

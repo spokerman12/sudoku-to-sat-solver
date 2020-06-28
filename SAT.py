@@ -46,6 +46,7 @@ def read_sat(s) :
     return instances
 
 def simplify(var, clauses) :
+    start = timer() 
     nvar = -var
     i = 0
     while i < len(clauses) :
@@ -69,6 +70,8 @@ def simplify(var, clauses) :
                     j -= 1
             j +=1
         i += 1
+    print(timer()-start,var)
+    print(str(clauses)[:20])
     return clauses
 
 def valid(nvars, clauses, values) :
