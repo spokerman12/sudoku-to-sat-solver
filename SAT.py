@@ -3,6 +3,11 @@ import time
 
 from RunWithTimeout import RunWithTimeout
 
+<<<<<<< HEAD
+=======
+import multiprocessing
+
+>>>>>>> a611f23e356863e34a8d12e57f348e60db37754f
 from queue import PriorityQueue
 
 from timeit import default_timer as timer
@@ -156,22 +161,23 @@ def format_sat(instance) :
     else :
         return "s cnf 0 " + str(instance[0])
 
-def solve_sat(s) :
+def solve_sat(s,return_dict) :
     output = ""
     for instance in read_sat(s) :
         output += format_sat(instance) + "\n"
         break
+    return_dict['solve_sat'] = output
     return output
 
 def solve_sat_timeout(s,time_limit):
     try:
-        thread = RunWithTimeout(solve_sat, (s,))
-        thread.run(time_limit)
-        
-        if type(thread)==type('string'):
+        manager = multiprocessing.Manager()
+        return_dict = manager.dict()
+        process = multiprocessing.Process(target=solve_sat,args=(s,return_dict))
+        process.start()
+        process.join(time_limit)
+        if process.is_alive():
+            process.terminate()
             return (0)
         else:
-            return (thread)
-        # return solve_sat(s)
-    except Exception as e:
-        print ( "Error occurred,",e)
+            return (return_dict['solve_sat'])
