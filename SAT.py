@@ -177,3 +177,6 @@ def solve_sat_timeout(s,time_limit):
             return (0)
         else:
             return (return_dict['solve_sat'])
+        # return solve_sat(s)
+    except Exception as e:
+        print ( "Error occurred,",e)
