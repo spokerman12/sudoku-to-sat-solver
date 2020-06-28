@@ -1,13 +1,9 @@
 import re
 import time
 
-from RunWithTimeout import RunWithTimeout
 
-<<<<<<< HEAD
-=======
 import multiprocessing
 
->>>>>>> a611f23e356863e34a8d12e57f348e60db37754f
 from queue import PriorityQueue
 
 from timeit import default_timer as timer
