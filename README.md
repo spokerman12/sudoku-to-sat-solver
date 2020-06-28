@@ -1,4 +1,5 @@
-# Sudoku-to-SAT-solver
+# SATurday Night Solver
+## a Sudoku-to-SAT solver
 Transforms a Sudoku to a boolean SAT problem and solves it 
 
 ## Installation:

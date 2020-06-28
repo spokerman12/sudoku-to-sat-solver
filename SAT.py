@@ -1,38 +1,66 @@
 import re
+import time
+
+from RunWithTimeout import RunWithTimeout
+
+import multiprocessing
+
 from queue import PriorityQueue
-from func_timeout import func_timeout, FunctionTimedOut
+
+from timeit import default_timer as timer
+
+
 def read_sat(s) :
-    A = []
-    B = []
-        
+    Clauses = []
+    Variables = []
+
+    p = False
+    p2 = False
     for line in s.split("\n") :
         if len(line) == 0 : continue
         if line[0] == "c" : continue
-        elif line[0] == "p" :
-            read_line = line[2:].strip('\n')
-            result = re.findall(r'[^\s]+', read_line)
-            B.append(int(result[1]))
-            A.append([])
         else :
-            result = [i for i in re.findall(r'[^\s]+', line)]
-            A[-1].append(result)
-
-    return [(B[i], A[i]) for i in range(len(A))]
+            line = line.strip('\n')
+            line = re.findall(r'[^\s]+', line)
+        for i in range(len(line)) :
+            if len(line[i]) == 0 : continue
+            if line[i] == "p" :
+                p = True
+                continue
+            if line[i] == "cnf" and p :
+                continue
+            if p :
+                Variables.append(int(line[i]))
+                Clauses.append([])
+                p = False
+                p2 = True
+                continue
+            elif p2 :
+                p2 = False
+            else :
+                if len(Clauses[-1]) == 0 or line[i] == "0" :
+                    Clauses[-1].append([])
+                if line[i] != "0" :
+                    Clauses[-1][-1].append(int(line[i]))
+    instances = [(Variables[i], Clauses[i]) for i in range(len(Clauses))]
+    #print(instances)
+    return instances
 
 def simplify(var, clauses) :
-    if var[0] == "-" :
-        nvar = var[1:]
-    else :
-        nvar = "-"+var
+    nvar = -var
     i = 0
     while i < len(clauses) :
+        if len(clauses[i]) == 0 :
+            clauses.pop(i)
+            i -= 1
+            continue
         j = 0
         while j != len(clauses[i]) :
-            if clauses[i][j] == str(var) :
+            if clauses[i][j] == var :
                 clauses.pop(i)
                 i -= 1
                 break
-            elif clauses[i][j] == str(nvar) :
+            elif clauses[i][j] == nvar :
                 if len(clauses[i]) == 1 :
                     clauses.pop(i)
                     i -= 1
@@ -44,100 +72,72 @@ def simplify(var, clauses) :
         i += 1
     return clauses
 
-# supone que se le pasa un entero no negativo
-"""
-def valid(var, clauses) :
-    var = str(var)
-    mvar = "-"+var
-    okpos = True
-    okneg = True
-    valids = []
-    for clause in clauses :
-        if not(okpos or okneg) : break
-        if len(clause) == 1 :
-            if clause[0] == var :
-                okpos = False
-                #print("chao", var)
-            elif clause[0] == mvar :
-                okneg = False
-                #print("chao", mvar)
-    if okpos : valids.append(var)
-    if okneg : valids.append(mvar)
-    #print(valids, okpos, okneg)
-    return valids
-"""
 def valid(nvars, clauses, values) :
+    #"""
     valids = set()
-    for i in range(nvars) :
-        i = str(i)
-        ni = "-"+i
+    niceness = {}
+    for i in range(1, nvars+1) :
+        ni = -i
+        niceness[i] = None
+        niceness[ni] = None
         if i in values or ni in values :
             continue
         valids.add(i)
         valids.add(ni)
+    
     for clause in clauses :
+        if len(clause) == 0 : continue
+        var = clause[0]
+        nvar = -var
+        
         if len(clause) == 1 :
-            var = clause[0]
-            if var[0] == "-" :
-                nvar = var[1:]
-            else :
-                nvar = "-"+var
-                
+            
             if not var in valids :
-                return set()
+                return PriorityQueue()
             if nvar in valids :
                 valids.remove(nvar)
-    return valids
 
-def occurrences(var, clauses) :
-    ok1 = ok2 = True
-    acum = 0
-    for clause in clauses :
         for v in clause :
-            if len(clause) == 1 :
-                if v == var :
-                    ok2 = False
-                elif v == -var :
-                    ok1 = False
-            if v == var or v == -var :
-                acum += 1
-    #print(var, ok1, ok2, acum)
+            nv = -v
+            if niceness[v] :
+                niceness[v] = min(niceness[v], len(clause))
+            else :
+                niceness[v] = len(clause)
+
+            if niceness[nv] :
+                niceness[nv] = min(niceness[nv], len(clause))
+            else :
+                niceness[nv] = len(clause)
+
+    q = PriorityQueue()
+    for i in valids :
+        if niceness[i] :
+            q.put((niceness[i], i))
+        elif i > 0 and niceness[-i] is None  :
+            values.add(i)
+    return q
+
 
 def ssat(nvars, claus, vals=set(), cola=None) :
+    # print(len(vals), len(claus))
+    # if len(claus) <= 20 : print(claus)
     clauses = [i.copy() for i in claus]
     values = vals.copy()
-    #print(len(values), len(clauses))
-    #print(nvars, clauses, values)
-    #if len(clauses) == 0 :
-    #    for i in range(nvars) :
-    #        if not i in  values and not -i in values :
-    #            values.add(str(i))
     if len(values) == nvars and len(clauses) == 0 :
-        #print("gg")
         return values
-    """
-    if cola is None :
-        cola = PriorityQueue()
-        for i in range(nvars) :
-            occurrences(i, clauses)
-    """
     valids = valid(nvars, clauses, values)
-    #print(valids, clauses)
-    for v in valids :
-        if v[0] == "-" :
-            nv = v[1:]
-        else :
-            nv = '-'+v
-        if not v in values and not nv in values :
-            #print(v, "hola")
-            #if not valid(v, clauses) : continue
+    valuesbackup = values.copy()
+    while not valids.empty() :
+        v = valids.get()[1]
+        if not v in values and not -v in values :
             simple = [i.copy() for i in clauses]
             simple = simplify(v, simple)
             values.add(v)
             r = ssat(nvars, simple, values)
             if r : return r
-            #print("bachaqueando", v)
-            values.remove(v)
+            values = valuesbackup.copy()
+    if len(values) == nvars and len(clauses) == 0 :
+        return values
     return None
 
 def verify(solution, clauses) :
@@ -152,32 +152,32 @@ def verify(solution, clauses) :
 def format_sat(instance) :
     aaa = [i.copy() for i in instance[1]]
     solution = ssat(instance[0], instance[1], set())
-    #print(solution, aaa)
     if solution :
         assert(verify(solution, instance[1]))
         return "s cnf 1 " + str(instance[0]) + "\n" + "\n".join(["v "+str(v) for v in solution])
     else :
         return "s cnf 0 " + str(instance[0])
 
-def solve_sat(s) :
+def solve_sat(s,return_dict) :
     output = ""
     for instance in read_sat(s) :
         output += format_sat(instance) + "\n"
+        break
+    return_dict['solve_sat']=output
     return output
 
 def solve_sat_timeout(s,time_limit):
-    try: 
-        return func_timeout(time_limit,solve_sat,args=(s))
-    except FunctionTimedOut:
-        print ( "Time out.\n")
+    try:
+        manager = multiprocessing.Manager()
+        return_dict = manager.dict()
+        process = multiprocessing.Process(target=solve_sat,args=(s,return_dict))
+        process.start()
+        process.join(time_limit)
+        if process.is_alive():
+            process.terminate()
+            return (0)
+        else:
+            return (return_dict['solve_sat'])
+        # return solve_sat(s)
     except Exception as e:
         print ( "Error occurred,",e)
-
-
-if __name__ == '__main__':
-    s =  "c perro\np cnf 5 5\n 2 -4\n 4\n-3\n"
-    #s = ""
-    s += "c perro\np cnf 5 5\n-4\n4 -2\n-3"
-    ss = "c gato"
-    print(solve_sat(s))
-    
