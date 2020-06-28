@@ -11,7 +11,7 @@ from timeit import default_timer as timer
 from Sudoku import Sudoku
 from SAT import solve_sat_timeout
 from file_helpers import sudoku_to_sat, solve_sudoku_zchaff 
-
+from pprint import pprint
 
 # Windows needs this to print the colors
 if os.name == "nt":
@@ -232,10 +232,10 @@ if __name__ == "__main__":
                     print('')
 
                 summary='Summary:\n'
-                summary='Using a time limit of'+str(time_limit)+' seconds.\n'
+                summary+='Using a time limit of'+str(time_limit)+' seconds.\n'
                 for j in range(i):
-                    summary+='Sudoku #'+str(j)+'| zChaff:'+zchaff_times[j]+'s'+'| Our Solver:'+our_solver_times[j]+'s |\n'
-
+                    summary+='Sudoku #'+str(j)+': zChaff:'+str(zchaff_times[j])+'s'+' | Our Solver:'+str(our_solver_times[j])+'s |'+'\n'
+                print(summary)
                 plt.plot(list(range(i)),our_solver_times, label='Our solver')
                 plt.plot(list(range(i)),zchaff_times, label='zChaff')
                 plt.xlabel('Sudoku #')
