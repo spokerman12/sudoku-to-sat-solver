@@ -69,7 +69,7 @@ if __name__ == "__main__":
                         digit_list.append(int(digit))                
 
                 our_sudoku = Sudoku()
-                our_sudoku.solution_from_sat(digit_list)
+                our_sudoku.solution_from_output(digit_list)
                 our_time = round(end - start,6)
                 percent_diff = round(abs(zchaff_time-our_time)/zchaff_time,2)
                 result = "Our solver solved in "+str(our_time)+" seconds, "+str(percent_diff)+"% of zChaff"
@@ -109,7 +109,7 @@ if __name__ == "__main__":
                             digit_list.append(int(digit))                
 
                     our_sudoku = Sudoku()
-                    our_sudoku.solution_from_sat(digit_list)
+                    our_sudoku.solution_from_output(digit_list)
                     our_time = round(end - start,6)
                     result = "Our solver solved in "+str(our_time)+" seconds."
                     our_sudoku.print(to_console=True)
@@ -156,7 +156,7 @@ if __name__ == "__main__":
         #                   plots them.
         elif sys.argv[1] == "compare_solvers":
             report_text = ''
-            with open('report.txt','w') as report:
+            with open('report-'+sys.argv[2]+'.txt','w') as report:
                 path_list, sat_sudokus = sudoku_to_sat(file)
                 i = 0
                 zchaff_times = []
@@ -219,11 +219,12 @@ if __name__ == "__main__":
                                 digit_list.append(int(digit))                
 
                         our_sudoku = Sudoku()
-                        our_sudoku.solution_from_sat(digit_list)
+                        our_sudoku.solution_from_output(digit_list)
                         our_time = round(end - start,6)
                         percent_diff = round(abs(zchaff_time-our_time)/zchaff_time,2)
                         result = "Our solver solved in "+str(our_time)+" seconds, "+str(percent_diff)+"% of zChaff\n"
                         
+                        # zchaff_sudoku.print()
                         # our_sudoku.print()
 
                         j,k =0,0 
