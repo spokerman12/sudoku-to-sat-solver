@@ -44,8 +44,9 @@ def sudoku_to_sat(input_file):
 
     return (path_list, sudoku_list)
 
+
 # Calls up on zChaff to solve a SUDOKU file
-def solve_sudoku_zchaff(path,time_limit):
-    cmd = "./zchaff64/zchaff " + path + " "+str(time_limit)
+def solve_sudoku_zchaff(path, time_limit):
+    cmd = "./zchaff64/zchaff " + path + " " + str(time_limit)
     cmd_output = os.popen(cmd).read()
     return cmd_output
