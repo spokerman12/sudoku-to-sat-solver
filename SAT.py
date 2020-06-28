@@ -42,7 +42,6 @@ def read_sat(s) :
                 if line[i] != "0" :
                     Clauses[-1][-1].append(int(line[i]))
     instances = [(Variables[i], Clauses[i]) for i in range(len(Clauses))]
-    #print(instances)
     return instances
 
 def simplify(var, clauses) :
@@ -72,7 +71,6 @@ def simplify(var, clauses) :
     return clauses
 
 def valid(nvars, clauses, values) :
-    #"""
     valids = set()
     niceness = {}
     for i in range(1, nvars+1) :
@@ -117,24 +115,29 @@ def valid(nvars, clauses, values) :
     return q
 
 
-def ssat(nvars, claus, vals=set(), cola=None) :
-    # print(len(vals), len(claus))
-    # if len(claus) <= 20 : print(claus)
+def ssat(nvars, claus, vals=set(), blacklist=set()) :
+    #print(len(vals), len(claus))
+    #if len(claus) <= 20 : print(claus)
     clauses = [i.copy() for i in claus]
     values = vals.copy()
+    blacklist = blacklist.copy()
     if len(values) == nvars and len(clauses) == 0 :
         return values
     valids = valid(nvars, clauses, values)
-    valuesbackup = values.copy()
     while not valids.empty() :
         v = valids.get()[1]
+        if v in blacklist : continue
         if not v in values and not -v in values :
             simple = [i.copy() for i in clauses]
             simple = simplify(v, simple)
             values.add(v)
-            r = ssat(nvars, simple, values)
+            r = ssat(nvars, simple, values, blacklist)
             if r : return r
-            values = valuesbackup.copy()
+            values.remove(v)
+            if -v in blacklist :
+                return None
+            else :
+                blacklist.add(v)
     if len(values) == nvars and len(clauses) == 0 :
         return values
     return None
@@ -152,7 +155,7 @@ def format_sat(instance) :
     aaa = [i.copy() for i in instance[1]]
     solution = ssat(instance[0], instance[1], set())
     if solution :
-        assert(verify(solution, instance[1]))
+        #assert(verify(solution, instance[1]))
         return "s cnf 1 " + str(instance[0]) + "\n" + "\n".join(["v "+str(v) for v in solution])
     else :
         return "s cnf 0 " + str(instance[0])
