@@ -1,8 +1,6 @@
 import re
 import time
 
-from RunWithTimeout import RunWithTimeout
-
 import multiprocessing
 
 from queue import PriorityQueue
