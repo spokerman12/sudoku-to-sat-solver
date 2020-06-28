@@ -80,12 +80,11 @@ if __name__ == "__main__":
 
         # full_solve: Solves all sudokus from an input file
         elif sys.argv[1] == "full_solve":
-            path_list, sudoku_list = sudoku_to_sat(file)
+            path_list, sat_sudokus = sudoku_to_sat(file)
             i = 0
             print("Solving with our solver")
-            for sudoku in path_list:
+            for path in path_list:
                 print("Sudoku #", i)
-                print("Unsolved")
                 sat_sudokus[i].print()
 
                 file = open(path,'r')
@@ -110,8 +109,7 @@ if __name__ == "__main__":
                     our_sudoku = Sudoku()
                     our_sudoku.solution_from_sat(digit_list)
                     our_time = round(end - start,6)
-                    percent_diff = round(abs(zchaff_time-our_time)/zchaff_time,2)
-                    result = "Our solver solved in "+str(our_time)+" seconds, "+str(percent_diff)+"% of zChaff"
+                    result = "Our solver solved in "+str(our_time)+" seconds."
                     our_sudoku.print()
                 
                 print(result)
@@ -124,7 +122,6 @@ if __name__ == "__main__":
             print("Solving with zChaff")
             for path in path_list:
                 print("- - - Sudoku #"+str(i)+"- - -")
-                print("Unsolved")
                 sat_sudokus[i].print()
                 
                 start = timer()
