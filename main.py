@@ -286,6 +286,7 @@ if __name__ == "__main__":
                     plt.xlabel("Sudoku #")
                     plt.ylabel("Time elapsed in seconds")
                     plt.legend(loc="best")
+                    plt.grid(True)
                     plt.savefig("comparison.png")
                     report_text += summary
                     report.write(report_text)
