@@ -79,7 +79,7 @@ Our solver is based on the following methods:
 
 - solve_sat_timeout: Same as solve_sat, only that it imposes a process timeout to make sure that the program finishes.
 
-## Techniques
+## Techniques and heuristics
 
 - Niceness: Valid allows us to build a priority queue with the elements worth testing where the priority is their 'niceness'. As it gets built, the unasigned variables (which occur in no clause) that have no proposed niceness are implied as 'True'. Valid returns a priority queue; if there's a contradiction among the variables and any clause, it returns None.
 
@@ -91,6 +91,15 @@ Our solver is based on the following methods:
 
 ## How our solver compares to zChaff
 ![alt text](https://github.com/spokerman12/sudoku-to-sat-solver/blob/master/comparison.png?raw=true)
+Here is a graph of how our solver fared against zChaff on all 45 Sudokus in test_input.txt
+
+zChaff is a VERY fast SAT solver. Our solver could not handle a decent chunk of the problems. It requires a more detailed analysis on its code and structures. Nevertheless, it **was written from scratch**, without basing ourselves on already-existing algorithms.
+
+However, we did find out that most approaches depend on backtracking (such as DPPL). Backtracking was our first choice in implementation.
+
+Also, Python is **not** the best language to write this program in. We chose it on a matter of simplicity and consent among the developers. Python assigns values by references and because it's an interpreted language, it doesn't run its scripts as fast as a compiled program, such as zChaff, which is written in C++.
+
+C++ would've been great. Or perhaps Rust. We considered Haskell but 50% of the team was very rusty on it. It would've been interesting in Prolog... but time was a constraint. 
 
 For more details, check out `report-test_input.txt`
 
@@ -113,3 +122,28 @@ we modeled the following sets of clauses (conjunctions):
 - **A valid Sudoku solution has only one number per slot**: `¬Xd_ij v ¬Xd'_ij`. There are bin(N^2,2) x N^4 clauses of this kind.
 - **A valid Sudoku solution has no repeating digits among its subsections (rows, columns, N x Nsquares)**: `¬Xd_s1 v ¬Xd_s2'` for each section 's', these both being either rows, columns or squares. 
 
+### Analyzing resource management
+
+If variables are in a set V, and clauses in a set C
+
+The most important processes in this set of programs, and their time complexity are:
+
+- simplify: With two nested loops, it takes O(|C|x|V|) = O(C^2). This method gets called by ssat each time the set of valid variables is not empty and it depends on how many variables are per clause. Worst case is every variable is in every clause.
+
+- ssat: This method, firstly ignoring our optimizations, can have a worst case of having to test every variable for each clause. That would be O(2x|V| x (|V|+|C|))
+
+Keep in mind that the number of clauses and variables are:
+	
+	|V| = N^6
+	|C| = N^2 + bin(N^2) x N^4 + 3xN^2xbin(N^2,2)xN^2
+	
+	O(2 x N^6 x (N^6+N^2 + bin(N^2) x N^4 + 3 x N^2 x bin(N^2,2) x N^2)) 
+
+Now, taking into account the techniques and heuristics we used, we can expect that at least |V| x |C| clauses would be cancelled, as there should be at least N^3 of each digit in the grid, but since we are focused on the worst case, we prefer to leave at that.
+
+Still, we could claim that the time complexity of our solver is as follows:
+
+	O(2 x N^6 x (N^6+N^2 + bin(N^2) x N + 3 x bin(N^2,2)x N)) 
+	
+
+- valid: Verifying whether the expression is True or False given a set of variable assignments takes O(|V|), as this method calculates the 'niceness' of each variable to decide on what to do next.
