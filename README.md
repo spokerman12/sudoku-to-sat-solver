@@ -62,8 +62,54 @@ You can set a timeout value for the algorithm you wish to execute. The default i
 
 ### Our Solver
 
+Our solver is based on the following methods:
+
+- read_sat: Reads a DIMACS_SAT format file and creates a list of subproblems.
+
+- simplify: Eliminates all clauses where the variable being tested 'P' occurs, likewise with all occurences of '¬P'
+
+- valid: Obtains the 'niceness' of each variable for the given clause. This would be the minimum length of the clause 'C' so that the variable occurs in 'C'.
+
+- ssat: Attempts to solve a SAT problem, backtracking and carrying over a blacklist of up-to-no-good variables. Read next section for more on these terms.
+- verify: With a set of variable assignments, checks out whether the given clauses are True or False. 
+
+- format_sat: Returns a solution in DIMACS SAT format.
+
+- solve_sat: The main procedure for the solver. Attempts to solve a SAT problem.
+
+- solve_sat_timeout: Same as solve_sat, only that it imposes a process timeout to make sure that the program finishes.
+
+## Techniques
+
+- Niceness: Valid allows us to build a priority queue with the elements worth testing where the priority is their 'niceness'. As it gets built, the unasigned variables (which occur in no clause) that have no proposed niceness are implied as 'True'. Valid returns a priority queue; if there's a contradiction among the variables and any clause, it returns None.
+
+- Backtracking: One of the go-to techniques to solve this problem. When testing out variable assignments, one must go back to try different paths. Basically, we're transversing a tree, and when we get to a "dead end", we go back. The branches are the many subproblems that we can find in the current input.
+
+- Blacklisting: Some variables are not worth checking for validity in a new subproblem. If a variable is 'nice' but is blacklisted, it is not considered for testing in that subproblem.
+
+- Simplification: We make use of the properties of the disjunction to more easily get rid of variables, as if we are testing P, we can get rid of (T v U v J v K v P).
+
+## How our solver compares to zChaff
 ![alt text](https://github.com/spokerman12/sudoku-to-sat-solver/blob/master/comparison.png?raw=true)
+
+For more details, check out `report-test_input.txt`
 
 ### Translating Sudokus to SAT
 
-Thanks to the clauses proposed by the course's teachers, 
+Thanks to the clauses proposed by the course's teachers, it wasn't too hard to translate the Sudokus to and from DIMACS SAT formats.
+
+The clauses were modeled using Python dictionaries and using a Numpy matrix as a grid.
+
+A SAT variable 'D' can be transformed into a Sudoku digit 'd' using the formula:
+
+	D = N**4 * i + N**2 * j + d
+
+Where 'N' is the order of the Sudoku (3 is default) 'i' are the rows and 'j' are the columns. There are N^6 variables.
+
+Knowing that, Xd_ij represents the digit 'd' on row 'i' and column 'j'...
+
+we modeled the following sets of clauses (conjunctions):
+- **A valid Sudoku solution has no empty slots**: `Disjunction for all Xd_ij for 1<=d<=N^2`. There are N^2 clauses of this kind.
+- **A valid Sudoku solution has only one number per slot**: `¬Xd_ij v ¬Xd'_ij`. There are bin(N^2,2) x N^4 clauses of this kind.
+- **A valid Sudoku solution has no repeating digits among its subsections (rows, columns, N x Nsquares)**: `¬Xd_s1 v ¬Xd_s2'` for each section 's', these both being either rows, columns or squares. 
+

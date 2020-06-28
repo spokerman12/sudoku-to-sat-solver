@@ -1,5 +1,5 @@
 - - -  Sudoku #0  - - -
-zChaff solved in 0.009699 seconds8 4 5 6 3 2 1 7 9 
+zChaff solved in 0.009208 seconds8 4 5 6 3 2 1 7 9 
 7 3 2 9 1 8 6 5 4 
 1 9 6 7 4 5 3 2 8 
 6 8 3 5 7 4 9 1 2 
@@ -9,8 +9,9 @@ zChaff solved in 0.009699 seconds8 4 5 6 3 2 1 7 9
 5 7 4 1 8 6 2 9 3 
 9 2 8 3 5 7 4 6 1 
 
-Our solver solved in 14.254247 seconds, 1468.66% of zChaff- - -  Sudoku #1  - - -
-zChaff solved in 0.009145 seconds8 3 2 4 5 6 7 9 1 
+Our solver solved in 13.827722 seconds, 1500.71% of zChaff
+- - -  Sudoku #1  - - -
+zChaff solved in 0.010869 seconds8 3 2 4 5 6 7 9 1 
 9 5 7 1 8 2 4 6 3 
 4 1 6 9 7 3 2 5 8 
 6 7 9 5 4 1 8 3 2 
@@ -20,8 +21,9 @@ zChaff solved in 0.009145 seconds8 3 2 4 5 6 7 9 1
 2 9 5 6 1 7 3 8 4 
 3 4 8 2 9 5 6 1 7 
 
-Our solver solved in 15.398659 seconds, 1682.83% of zChaff- - -  Sudoku #2  - - -
-zChaff solved in 0.009962 seconds4 9 5 6 1 8 2 3 7 
+Our solver solved in 14.273729 seconds, 1312.25% of zChaff
+- - -  Sudoku #2  - - -
+zChaff solved in 0.009787 seconds4 9 5 6 1 8 2 3 7 
 7 2 6 3 4 9 5 8 1 
 3 1 8 7 2 5 4 6 9 
 5 7 2 8 9 4 3 1 6 
@@ -31,8 +33,271 @@ zChaff solved in 0.009962 seconds4 9 5 6 1 8 2 3 7
 2 6 4 1 8 7 9 5 3 
 9 5 1 4 3 2 6 7 8 
 
-Our solver solved in 16.098118 seconds, 1614.95% of zChaffSummary:
-Using a time limit of 120 seconds.
-Sudoku #0: zChaff:0.009699s | Our Solver:14.254247s |
-Sudoku #1: zChaff:0.009145s | Our Solver:15.398659s |
-Sudoku #2: zChaff:0.009962s | Our Solver:16.098118s |
+Our solver solved in 15.568138 seconds, 1589.7% of zChaff
+- - -  Sudoku #3  - - -
+zChaff solved in 0.009867 seconds2 5 6 8 3 1 7 4 9 
+8 3 7 6 4 9 5 1 2 
+1 9 4 7 2 5 3 8 6 
+6 4 1 5 8 7 9 2 3 
+7 2 5 1 9 3 8 6 4 
+3 8 9 4 6 2 1 7 5 
+9 7 8 2 5 4 6 3 1 
+5 6 2 3 1 8 4 9 7 
+4 1 3 9 7 6 2 5 8 
+
+Our solver solved in 15.492925 seconds, 1569.18% of zChaff
+- - -  Sudoku #4  - - -
+zChaff solved in 0.010061 seconds3 2 5 8 6 7 1 9 4 
+6 8 1 4 9 5 3 2 7 
+7 9 4 3 2 1 5 6 8 
+5 3 9 6 1 4 8 7 2 
+2 6 8 7 3 9 4 5 1 
+4 1 7 5 8 2 6 3 9 
+1 5 3 9 7 8 2 4 6 
+9 4 2 1 5 6 7 8 3 
+8 7 6 2 4 3 9 1 5 
+
+Our solver solved in 15.467893 seconds, 1536.41% of zChaff
+- - -  Sudoku #5  - - -
+zChaff solved in 0.0099 seconds3 6 1 7 2 5 9 4 8 
+9 8 7 4 1 3 2 5 6 
+2 5 4 8 6 9 1 3 7 
+8 7 6 9 3 4 5 1 2 
+5 2 3 1 8 6 7 9 4 
+4 1 9 2 5 7 6 8 3 
+6 4 5 3 7 1 8 2 9 
+7 3 8 5 9 2 4 6 1 
+1 9 2 6 4 8 3 7 5 
+
+Our solver solved in 15.373606 seconds, 1551.89% of zChaff
+- - -  Sudoku #6  - - -
+zChaff solved in 0.00994 secondsTime out. Moving on.- - -  Sudoku #7  - - -
+zChaff solved in 0.010994 secondsTime out. Moving on.- - -  Sudoku #8  - - -
+zChaff solved in 0.010874 seconds8 9 3 2 7 5 1 4 6 
+6 5 7 9 4 1 3 2 8 
+1 4 2 6 3 8 5 9 7 
+9 7 1 5 8 4 6 3 2 
+4 6 8 3 2 9 7 5 1 
+3 2 5 1 6 7 9 8 4 
+5 3 6 4 1 2 8 7 9 
+7 1 4 8 9 3 2 6 5 
+2 8 9 7 5 6 4 1 3 
+
+Our solver solved in 15.433448 seconds, 1418.3% of zChaff
+- - -  Sudoku #9  - - -
+zChaff solved in 0.009876 secondsTime out. Moving on.- - -  Sudoku #10  - - -
+zChaff solved in 0.0105 secondsTime out. Moving on.- - -  Sudoku #11  - - -
+zChaff solved in 0.010336 seconds3 5 9 4 8 1 7 6 2 
+7 6 4 9 2 3 8 5 1 
+1 2 8 5 6 7 3 4 9 
+2 1 5 6 7 8 4 9 3 
+4 7 3 2 5 9 1 8 6 
+8 9 6 1 3 4 2 7 5 
+9 4 2 7 1 6 5 3 8 
+6 8 1 3 4 5 9 2 7 
+5 3 7 8 9 2 6 1 4 
+
+Our solver solved in 15.495172 seconds, 1498.15% of zChaff
+- - -  Sudoku #12  - - -
+zChaff solved in 0.010162 secondsTime out. Moving on.- - -  Sudoku #13  - - -
+zChaff solved in 0.011068 secondsTime out. Moving on.- - -  Sudoku #14  - - -
+zChaff solved in 0.01228 secondsTime out. Moving on.- - -  Sudoku #15  - - -
+zChaff solved in 0.010395 seconds2 3 8 4 6 7 9 1 5 
+4 1 5 2 9 3 6 7 8 
+7 9 6 8 5 1 2 3 4 
+9 7 3 5 4 8 1 6 2 
+6 2 4 1 3 9 8 5 7 
+8 5 1 7 2 6 4 9 3 
+5 8 7 9 1 2 3 4 6 
+1 6 2 3 7 4 5 8 9 
+3 4 9 6 8 5 7 2 1 
+
+Our solver solved in 15.580877 seconds, 1497.88% of zChaff
+- - -  Sudoku #16  - - -
+zChaff solved in 0.009788 seconds3 1 2 8 6 5 9 4 7 
+6 5 7 9 3 4 1 8 2 
+8 9 4 1 7 2 5 6 3 
+2 4 6 7 9 1 3 5 8 
+1 3 5 4 8 6 2 7 9 
+7 8 9 5 2 3 4 1 6 
+4 7 8 3 1 9 6 2 5 
+5 2 3 6 4 8 7 9 1 
+9 6 1 2 5 7 8 3 4 
+
+Our solver solved in 15.840424 seconds, 1617.35% of zChaff
+- - -  Sudoku #17  - - -
+zChaff solved in 0.009896 seconds2 7 1 8 3 9 5 4 6 
+4 6 9 2 7 5 8 1 3 
+8 3 5 1 6 4 7 9 2 
+3 4 2 9 1 7 6 5 8 
+6 5 8 4 2 3 9 7 1 
+9 1 7 5 8 6 2 3 4 
+1 2 3 7 5 8 4 6 9 
+7 9 6 3 4 2 1 8 5 
+5 8 4 6 9 1 3 2 7 
+
+Our solver solved in 15.73358 seconds, 1588.89% of zChaff
+- - -  Sudoku #18  - - -
+zChaff solved in 0.009951 seconds6 7 2 8 4 1 3 5 9 
+4 9 5 7 6 3 2 8 1 
+3 8 1 9 5 2 6 7 4 
+8 1 3 6 9 7 4 2 5 
+5 2 6 3 1 4 7 9 8 
+7 4 9 5 2 8 1 3 6 
+2 6 7 1 8 9 5 4 3 
+1 3 8 4 7 5 9 6 2 
+9 5 4 2 3 6 8 1 7 
+
+Our solver solved in 15.20853 seconds, 1527.34% of zChaff
+- - -  Sudoku #19  - - -
+zChaff solved in 0.009908 secondsTime out. Moving on.- - -  Sudoku #20  - - -
+zChaff solved in 0.012063 secondsTime out. Moving on.- - -  Sudoku #21  - - -
+zChaff solved in 0.010854 secondsTime out. Moving on.- - -  Sudoku #22  - - -
+zChaff solved in 0.010944 seconds9 8 7 5 2 1 4 6 3 
+4 6 3 9 7 8 5 1 2 
+2 1 5 3 4 6 9 8 7 
+3 4 1 7 6 9 2 5 8 
+7 2 6 8 3 5 1 9 4 
+5 9 8 2 1 4 3 7 6 
+1 3 2 6 5 7 8 4 9 
+8 7 4 1 9 2 6 3 5 
+6 5 9 4 8 3 7 2 1 
+
+Our solver solved in 15.792792 seconds, 1442.05% of zChaff
+- - -  Sudoku #23  - - -
+zChaff solved in 0.010032 secondsTime out. Moving on.- - -  Sudoku #24  - - -
+zChaff solved in 0.013428 secondsTime out. Moving on.- - -  Sudoku #25  - - -
+zChaff solved in 0.011011 secondsTime out. Moving on.- - -  Sudoku #26  - - -
+zChaff solved in 0.010496 secondsTime out. Moving on.- - -  Sudoku #27  - - -
+zChaff solved in 0.01074 seconds9 7 2 8 6 3 5 4 1 
+6 1 8 7 4 5 9 2 3 
+4 5 3 2 9 1 6 8 7 
+5 4 9 1 2 8 7 3 6 
+8 2 1 6 3 7 4 5 9 
+7 3 6 4 5 9 2 1 8 
+2 9 5 3 8 6 1 7 4 
+1 8 4 9 7 2 3 6 5 
+3 6 7 5 1 4 8 9 2 
+
+Our solver solved in 15.517374 seconds, 1443.82% of zChaff
+- - -  Sudoku #28  - - -
+zChaff solved in 0.010044 seconds8 5 2 7 1 6 9 4 3 
+1 9 7 8 4 3 6 5 2 
+4 6 3 9 2 5 1 8 7 
+2 7 8 6 3 4 5 9 1 
+6 4 5 1 7 9 3 2 8 
+9 3 1 5 8 2 4 7 6 
+7 8 6 4 9 1 2 3 5 
+3 1 4 2 5 8 7 6 9 
+5 2 9 3 6 7 8 1 4 
+
+Our solver solved in 15.521408 seconds, 1544.34% of zChaff
+- - -  Sudoku #29  - - -
+zChaff solved in 0.009905 seconds1 9 3 6 7 2 4 8 5 
+4 6 2 3 5 8 9 7 1 
+7 8 5 9 1 4 6 2 3 
+5 3 8 2 9 6 7 1 4 
+6 7 4 1 3 5 2 9 8 
+2 1 9 4 8 7 3 5 6 
+8 2 6 7 4 1 5 3 9 
+9 4 1 5 2 3 8 6 7 
+3 5 7 8 6 9 1 4 2 
+
+Our solver solved in 15.513089 seconds, 1565.19% of zChaff
+- - -  Sudoku #30  - - -
+zChaff solved in 0.009971 secondsTime out. Moving on.- - -  Sudoku #31  - - -
+zChaff solved in 0.010788 secondsTime out. Moving on.- - -  Sudoku #32  - - -
+zChaff solved in 0.01063 secondsTime out. Moving on.- - -  Sudoku #33  - - -
+zChaff solved in 0.012902 secondsTime out. Moving on.- - -  Sudoku #34  - - -
+zChaff solved in 0.01097 secondsTime out. Moving on.- - -  Sudoku #35  - - -
+zChaff solved in 0.015186 secondsTime out. Moving on.- - -  Sudoku #36  - - -
+zChaff solved in 0.010978 seconds1 7 3 8 5 9 6 2 4 
+2 9 8 7 4 6 1 5 3 
+4 5 6 2 3 1 9 7 8 
+3 1 7 4 2 8 5 6 9 
+8 4 9 1 6 5 7 3 2 
+6 2 5 9 7 3 8 4 1 
+5 8 2 6 9 4 3 1 7 
+9 3 4 5 1 7 2 8 6 
+7 6 1 3 8 2 4 9 5 
+
+Our solver solved in 15.499067 seconds, 1410.83% of zChaff
+- - -  Sudoku #37  - - -
+zChaff solved in 0.009931 seconds9 4 7 5 3 1 8 2 6 
+6 3 5 8 2 4 9 1 7 
+2 1 8 7 9 6 4 5 3 
+5 6 3 1 8 7 2 4 9 
+8 9 4 6 5 2 3 7 1 
+1 7 2 3 4 9 5 6 8 
+3 8 6 4 7 5 1 9 2 
+7 5 9 2 1 8 6 3 4 
+4 2 1 9 6 3 7 8 5 
+
+Our solver solved in 16.033388 seconds, 1613.48% of zChaff
+- - -  Sudoku #38  - - -
+zChaff solved in 0.010465 seconds7 6 3 1 2 8 4 5 9 
+9 2 4 5 6 7 8 3 1 
+8 5 1 9 3 4 2 7 6 
+4 1 8 2 9 5 3 6 7 
+2 7 5 6 4 3 1 9 8 
+6 3 9 7 8 1 5 4 2 
+3 4 2 8 7 6 9 1 5 
+1 8 6 3 5 9 7 2 4 
+5 9 7 4 1 2 6 8 3 
+
+Our solver solved in 17.769763 seconds, 1697.02% of zChaff
+- - -  Sudoku #39  - - -
+zChaff solved in 0.010187 secondsTime out. Moving on.- - -  Sudoku #40  - - -
+zChaff solved in 0.012488 secondsTime out. Moving on.- - -  Sudoku #41  - - -
+zChaff solved in 0.011205 secondsTime out. Moving on.- - -  Sudoku #42  - - -
+zChaff solved in 0.011537 secondsTime out. Moving on.- - -  Sudoku #43  - - -
+zChaff solved in 0.01141 secondsTime out. Moving on.- - -  Sudoku #44  - - -
+zChaff solved in 0.029384 secondsTime out. Moving on.- - -  Sudoku #45  - - -
+zChaff solved in 0.011046 secondsTime out. Moving on.Summary:
+Using a time limit of 30 seconds.
+Sudoku #0: zChaff:0.009208s | Our Solver:13.827722s |
+Sudoku #1: zChaff:0.010869s | Our Solver:14.273729s |
+Sudoku #2: zChaff:0.009787s | Our Solver:15.568138s |
+Sudoku #3: zChaff:0.009867s | Our Solver:15.492925s |
+Sudoku #4: zChaff:0.010061s | Our Solver:15.467893s |
+Sudoku #5: zChaff:0.0099s | Our Solver:15.373606s |
+Sudoku #6: zChaff:0.00994s | Our Solver:30s |
+Sudoku #7: zChaff:0.010994s | Our Solver:30s |
+Sudoku #8: zChaff:0.010874s | Our Solver:15.433448s |
+Sudoku #9: zChaff:0.009876s | Our Solver:30s |
+Sudoku #10: zChaff:0.0105s | Our Solver:30s |
+Sudoku #11: zChaff:0.010336s | Our Solver:15.495172s |
+Sudoku #12: zChaff:0.010162s | Our Solver:30s |
+Sudoku #13: zChaff:0.011068s | Our Solver:30s |
+Sudoku #14: zChaff:0.01228s | Our Solver:30s |
+Sudoku #15: zChaff:0.010395s | Our Solver:15.580877s |
+Sudoku #16: zChaff:0.009788s | Our Solver:15.840424s |
+Sudoku #17: zChaff:0.009896s | Our Solver:15.73358s |
+Sudoku #18: zChaff:0.009951s | Our Solver:15.20853s |
+Sudoku #19: zChaff:0.009908s | Our Solver:30s |
+Sudoku #20: zChaff:0.012063s | Our Solver:30s |
+Sudoku #21: zChaff:0.010854s | Our Solver:30s |
+Sudoku #22: zChaff:0.010944s | Our Solver:15.792792s |
+Sudoku #23: zChaff:0.010032s | Our Solver:30s |
+Sudoku #24: zChaff:0.013428s | Our Solver:30s |
+Sudoku #25: zChaff:0.011011s | Our Solver:30s |
+Sudoku #26: zChaff:0.010496s | Our Solver:30s |
+Sudoku #27: zChaff:0.01074s | Our Solver:15.517374s |
+Sudoku #28: zChaff:0.010044s | Our Solver:15.521408s |
+Sudoku #29: zChaff:0.009905s | Our Solver:15.513089s |
+Sudoku #30: zChaff:0.009971s | Our Solver:30s |
+Sudoku #31: zChaff:0.010788s | Our Solver:30s |
+Sudoku #32: zChaff:0.01063s | Our Solver:30s |
+Sudoku #33: zChaff:0.012902s | Our Solver:30s |
+Sudoku #34: zChaff:0.01097s | Our Solver:30s |
+Sudoku #35: zChaff:0.015186s | Our Solver:30s |
+Sudoku #36: zChaff:0.010978s | Our Solver:15.499067s |
+Sudoku #37: zChaff:0.009931s | Our Solver:16.033388s |
+Sudoku #38: zChaff:0.010465s | Our Solver:17.769763s |
+Sudoku #39: zChaff:0.010187s | Our Solver:30s |
+Sudoku #40: zChaff:0.012488s | Our Solver:30s |
+Sudoku #41: zChaff:0.011205s | Our Solver:30s |
+Sudoku #42: zChaff:0.011537s | Our Solver:30s |
+Sudoku #43: zChaff:0.01141s | Our Solver:30s |
+Sudoku #44: zChaff:0.029384s | Our Solver:30s |
+Sudoku #45: zChaff:0.011046s | Our Solver:30s |
