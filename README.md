@@ -6,7 +6,7 @@ Transforms a Sudoku to a boolean SAT problem and solves it
 - Clone this repository, say in `~/sudoku-to-sat-solver`
 - Create a virtualenv, if you care about your current Python installation.
 - Do `pip install -r requirements.txt`
-- Install zChaff from https://www.princeton.edu/chaff/zchaff.html. You may need to fix an import. It's easy.
+- Install zChaff from https://www.princeton.edu/~chaff/zchaff.html. You may need to fix an import. It's easy.
 - Make sure that the zchaff64 dir is in `~/sudoku-to-sat-solver`
 
 ## Instructions
