@@ -11,7 +11,7 @@ from timeit import default_timer as timer
 from Sudoku import Sudoku
 from SAT import solve_sat_timeout
 from file_helpers import sudoku_to_sat, solve_sudoku_zchaff 
-
+from pprint import pprint
 
 # Windows needs this to print the colors
 if os.name == "nt":
@@ -152,7 +152,7 @@ if __name__ == "__main__":
         #                   plots them.
         elif sys.argv[1] == "compare_solvers":
             report_text = ''
-            with open('report.txt','w') as report:
+            with open('report-'+sys.argv[2]+'.txt','w') as report:
                 path_list, sat_sudokus = sudoku_to_sat(file)
                 i = 0
                 zchaff_times = []
@@ -213,15 +213,19 @@ if __name__ == "__main__":
                                 digit_list.append(int(digit))                
 
                         our_sudoku = Sudoku()
-                        our_sudoku.solution_from_sat(digit_list)
+                        our_sudoku.solution_from_output(digit_list)
                         our_time = round(end - start,6)
                         percent_diff = round(abs(zchaff_time-our_time)/zchaff_time,2)
                         result = "Our solver solved in "+str(our_time)+" seconds, "+str(percent_diff)+"% of zChaff"
 
-                        for row in zchaff_sudoku.grid:
-                            if row not in  our_sudoku.grid:
-                                assert(False)    
-                            
+                        # zchaff_sudoku.print()
+                        # our_sudoku.print()
+
+                        j,k =0,0 
+                        for j in range(9):
+                            for k in range(9):
+                                assert(our_sudoku.grid[j][k]==zchaff_sudoku.grid[j][k])    
+                        
                         report_text += our_sudoku.print()
                         report_text += str(result)
                     
@@ -232,10 +236,10 @@ if __name__ == "__main__":
                     print('')
 
                 summary='Summary:\n'
-                summary='Using a time limit of'+str(time_limit)+' seconds.\n'
+                summary+='Using a time limit of'+str(time_limit)+' seconds.\n'
                 for j in range(i):
-                    summary+='Sudoku #'+str(j)+'| zChaff:'+zchaff_times[j]+'s'+'| Our Solver:'+our_solver_times[j]+'s |\n'
-
+                    summary+='Sudoku #'+str(j)+': zChaff:'+str(zchaff_times[j])+'s'+' | Our Solver:'+str(our_solver_times[j])+'s |'+'\n'
+                print(summary)
                 plt.plot(list(range(i)),our_solver_times, label='Our solver')
                 plt.plot(list(range(i)),zchaff_times, label='zChaff')
                 plt.xlabel('Sudoku #')

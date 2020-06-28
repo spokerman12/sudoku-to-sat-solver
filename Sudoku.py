@@ -90,7 +90,6 @@ class Sudoku():
 	# embeds it into the grid
 	def solution_from_output(self,output_string):
 		digit_string = ''
-		print(output_string,len(output_string))
 		for digit in output_string:
 			if digit > 0:
 				i = find_i(digit)
@@ -98,7 +97,7 @@ class Sudoku():
 				d = digit-i*3**4-j*3**2
 				if d == 0:
 					d = 9
-				digit_string += str(d)			
+				digit_string += str(d-1).replace('0','9')			
 		self.grid = np.array(np.array_split(list(digit_string),self.order**2)).reshape((self.order**2,self.order**2))
 		return self.grid
 
