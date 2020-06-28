@@ -77,48 +77,45 @@ def simplify(var, clauses):
     return clauses
 
 
-def valid(nvars, clauses, values):
+def valid(nvars, clauses, values) :
     valids = set()
     niceness = {}
-    for i in range(1, nvars + 1):
+    for i in range(1, nvars+1) :
         ni = -i
         niceness[i] = None
         niceness[ni] = None
-        if i in values or ni in values:
+        if i in values or ni in values :
             continue
         valids.add(i)
         valids.add(ni)
-
-    for clause in clauses:
-        if len(clause) == 0:
-            continue
+    
+    for clause in clauses :
+        if len(clause) == 0 : continue
         var = clause[0]
         nvar = -var
-
-        if len(clause) == 1:
-
-            if not var in valids:
+        
+        if len(clause) == 1 :
+            
+            if not var in valids :
                 return PriorityQueue()
-            if nvar in valids:
+            if nvar in valids :
                 valids.remove(nvar)
 
-        for v in clause:
-            nv = -v
-            if niceness[v]:
+        for v in clause :
+            #nv = -v
+            if niceness[v] :
                 niceness[v] = min(niceness[v], len(clause))
-            else:
+                #niceness[v] += len(clause)
+                #niceness[v] -= 1
+            else :
                 niceness[v] = len(clause)
 
-            if niceness[nv]:
-                niceness[nv] = min(niceness[nv], len(clause))
-            else:
-                niceness[nv] = len(clause)
-
     q = PriorityQueue()
-    for i in valids:
-        if niceness[i]:
+    for i in valids :
+        if niceness[i] :
+            if i < 0 : niceness[i] += 1
             q.put((niceness[i], i))
-        elif i > 0 and niceness[-i] is None:
+        elif i > 0 and niceness[-i] is None  :
             values.add(i)
     return q
 
