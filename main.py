@@ -4,59 +4,21 @@ import sys
 import re
 
 import matplotlib.pyplot as plt
+import unittest 
+import threading
 
 from timeit import default_timer as timer
-from func_timeout import func_timeout, FunctionTimedOut
+from RunWithTimeout import RunWithTimeout
 from Sudoku import Sudoku
 from SAT import solve_sat_timeout
+from file_helpers import sudoku_to_sat, solve_sudoku_zchaff 
+
 
 # Windows needs this to print the colors
 if os.name == "nt":
     import colorama
     colorama.init()
 
-# Solves all the SUDOKU strings on an input file
-def sudoku_to_sat(input_file):
-
-    dirname = os.path.split(os.path.abspath(__file__))[0] + "/output"
-    os.makedirs(os.path.dirname(dirname), exist_ok=True)
-
-    path_list = []
-    sudoku_list = []
-    file_counter = 0
-    for line in input_file.readlines():
-        if line and line[0].isalnum():
-            order = int(line[0])
-            if order > 6:
-                print("Order not supported. Ignoring")
-                continue
-            read_line = list(line[2:].strip("\n"))
-            for i in range(len(read_line)):
-                if read_line[i] == ".":
-                    read_line[i] = 36
-                elif not read_line[i].isdigit():
-                    read_line[i] = ord(read_line[i])
-                elif read_line[i] == " ":
-                    continue
-                else:
-                    read_line[i] = int(read_line[i])
-            sudoku = Sudoku(read_line, order)
-            sudoku_list.append(sudoku)
-            sat_sudoku = sudoku.to_sat()
-
-            with open(dirname + "/output" + str(file_counter), "+w") as output_file:
-                output_file.write(sat_sudoku)
-
-            path_list.append(dirname + "/output" + str(file_counter))
-            file_counter += 1
-
-    return (path_list, sudoku_list)
-
-# Calls up on zChaff to solve a SUDOKU file
-def solve_sudoku_zchaff(path,time_limit):
-    cmd = "./zchaff64/zchaff " + path + " "+str(time_limit)
-    cmd_output = os.popen(cmd).read()
-    return cmd_output
 
 # Main procedure.
 # Please refer to README.md for better info on how to use this
@@ -78,7 +40,8 @@ if __name__ == "__main__":
         except Exception as e:
             print('Could not read time limit',e)
     else:
-        time_limit = 100
+        time_limit = 120
+        print("Using default time of",time_limit,"seconds")
 
     with open(filename) as file:
 
@@ -90,12 +53,12 @@ if __name__ == "__main__":
         # solve_sat: Solves a single SAT from a DIMACS SAT input file
         elif sys.argv[1] == "solve_sat":
             output = solve_sat(file.read())
-            all_the_digits = [
+            all_digits = [
                 int(x.strip("v ")) + 1 for x in re.findall("v -?\d+", output)
             ]
 
             digit_list = []
-            for digit in all_the_digits:
+            for digit in all_digits:
                 if digit > 0:
                     digit_list.append(int(digit))
             # print(len(digit_list))
@@ -117,12 +80,12 @@ if __name__ == "__main__":
                 start = timer()
                 output = solve_sat_timeout(file.read(),time_limit)
                 end = timer()
-                all_the_digits = [
+                all_digits = [
                     int(x.strip("v ")) + 1 for x in re.findall("v -?\d+", output)
                 ]
 
                 digit_list = []
-                for digit in all_the_digits:
+                for digit in all_digits:
                     if digit > 0:
                         digit_list.append(int(digit))
                 # print(len(digit_list))
@@ -141,7 +104,7 @@ if __name__ == "__main__":
             i = 0
             print("Solving with zChaff")
             for path in path_list:
-                print("Sudoku #", i)
+                print("- - - Sudoku #"+str(i)+"- - -")
                 print("Unsolved")
                 sat_sudokus[i].print()
                 
@@ -160,9 +123,9 @@ if __name__ == "__main__":
                 solution = solution.split("Random Seed Used")[0]
                 solution = solution.split("Instance Satisfiable")[1]
                 digit_list = []
-                all_the_digits = re.findall("-?\d+", solution)
+                all_digits = re.findall("-?\d+", solution)
 
-                for digit in all_the_digits:
+                for digit in all_digits:
                     if int(digit) > 0:
                         digit_list.append(int(digit))
                 sudoku = Sudoku()
@@ -185,66 +148,76 @@ if __name__ == "__main__":
                 our_solver_times = []
                 for path in path_list:
                     print("Sudoku #", i)
+                    sat_sudokus[i].print()
                     report_text += "Sudoku #"+' '+str(i)+'\n'
-                    # print("Unsolved")
-                    # sat_sudokus[i].print()
-                    
+
                     # zChaff
                     start = timer()
-                    try: # This block handles timeout and whether it's satisfiable or not
-                        solution = func_timeout(time_limit,solve_sudoku_zchaff,args=(path,time_limit))
-                        if "Unsatisfiable" in solution:
-                            print("Unsatisfiable! Time elapsed:",str(end-start))
-                            report_text += "Unsatisfiable! Time elapsed:"+str(end-start)+'\n'
-                            continue
-                    except FunctionTimedOut:
-                        print("Timed out! Time elapsed:",str(end-start))
-                        report_text += "Timed Out! Time elapsed:"+str(end-start)+'\n'
-                    except Exception as e:
-                        print ( "Error occurred,",e)
+                    solution = solve_sudoku_zchaff(path,time_limit)
                     end = timer()
+                    zchaff_time = round(end - start,6)
+                    if "Unsatisfiable" in solution:
+                        result="Unsatisfiable! Time elapsed:"+str(zchaff_time)+'\n'
+                        report_text += result
+                        continue
+                    else:
+                        try:
+                            solution = solution.split("Random Seed Used")[0]
+                            solution = solution.split("Instance Satisfiable")[1]
+                            digit_list = []
+                            all_digits = re.findall("-?\d+", solution)
 
-                    solution = solution.split("Random Seed Used")[0]
-                    solution = solution.split("Instance Satisfiable")[1]
-                    digit_list = []
-                    all_the_digits = re.findall("-?\d+", solution)
+                            for digit in all_digits:
+                                if int(digit) > 0:
+                                    digit_list.append(int(digit))
+                            zchaff_sudoku = Sudoku()
+                            zchaff_sudoku.solution_from_sat(digit_list)
+                            result ="zChaff solved in "+ str(zchaff_time)+" seconds"
+                        except:
+                            result+= "Time out. Moving on'\n'"
+                    
+                    print(result)
+                    report_text += result
+                    zchaff_times.append(zchaff_time)
 
-                    for digit in all_the_digits:
-                        if int(digit) > 0:
-                            digit_list.append(int(digit))
-                    sudoku = Sudoku()
-                    sat_sudokus[i].print()
-                    sudoku.solution_from_sat(digit_list)
-                    print("zChaff solved in ", str(end - start), "seconds")
-                    report_text += "zChaff solved in "+str(end-start)+'seconds\n'
-                    zchaff_times.append(end-start)
 
                     # Our solver
                     file = open(path,'r')
-
                     start = timer()
-                    # try # This block handles timeout and whether it's satisfiable or not
-                    # output = solve_sat_timeout(file.read(),time_limit)
-                    # Ver el estado de la solucion
+                    output = solve_sat_timeout(file.read(),time_limit)
                     end = timer()
-                    # all_the_digits = [
-                    #     int(x.strip("v ")) + 1 for x in re.findall("v -?\d+", output)
-                    # ]
+    
+                    if type(output) != type('string'):
+                        result ='Time out. Moving on.'
+                        our_time = time_limit
+                        report_text += str(result)
+                    else:
+                        all_digits = [
+                            int(x.strip("v ")) + 1 for x in re.findall("v -?\d+", output)
+                        ]
 
-                    # digit_list = []
-                    # for digit in all_the_digits:
-                    #     if digit > 0:
-                    #         digit_list.append(int(digit))                
+                        digit_list = []
+                        for digit in all_digits:
+                            if digit > 0:
+                                digit_list.append(int(digit))                
 
-                    # sudoku = Sudoku()
-                    # sudoku.solution_from_sat(digit_list)
-                    print("Our solver solved in ", str(end - start), "seconds")
-                    report_text += "Our solver solved in "+str(end - start)+" seconds\n"
-                    our_solver_times.append(end-start)
+                        our_sudoku = Sudoku()
+                        our_sudoku.solution_from_sat(digit_list)
+                        our_time = round(end - start,6)
+                        percent_diff = round(abs(zchaff_time-our_time)/zchaff_time,2)
+                        result = "Our solver solved in "+str(our_time)+"seconds, "+str(percent_diff)+"% of zChaff"
 
+                        for row in zchaff_sudoku.grid:
+                            if row not in  our_sudoku.grid:
+                                assert(False)    
+                            
+                        report_text += our_sudoku.print()
+                        report_text += str(result)
+                    
+                    print(result)
+                    our_solver_times.append(our_time)
 
-                    report_text += sudoku.print()
-
+                    # sys.exit(1)
                     i += 1
                     print('')
 
