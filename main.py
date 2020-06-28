@@ -152,7 +152,7 @@ if __name__ == "__main__":
         #                   plots them.
         elif sys.argv[1] == "compare_solvers":
             report_text = ''
-            with open('report.txt','w') as report:
+            with open('report-'+sys.argv[2]+'.txt','w') as report:
                 path_list, sat_sudokus = sudoku_to_sat(file)
                 i = 0
                 zchaff_times = []
@@ -213,15 +213,19 @@ if __name__ == "__main__":
                                 digit_list.append(int(digit))                
 
                         our_sudoku = Sudoku()
-                        our_sudoku.solution_from_sat(digit_list)
+                        our_sudoku.solution_from_output(digit_list)
                         our_time = round(end - start,6)
                         percent_diff = round(abs(zchaff_time-our_time)/zchaff_time,2)
                         result = "Our solver solved in "+str(our_time)+" seconds, "+str(percent_diff)+"% of zChaff"
 
-                        for row in zchaff_sudoku.grid:
-                            if row not in  our_sudoku.grid:
-                                assert(False)    
-                            
+                        # zchaff_sudoku.print()
+                        # our_sudoku.print()
+
+                        j,k =0,0 
+                        for j in range(9):
+                            for k in range(9):
+                                assert(our_sudoku.grid[j][k]==zchaff_sudoku.grid[j][k])    
+                        
                         report_text += our_sudoku.print()
                         report_text += str(result)
                     
