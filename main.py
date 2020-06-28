@@ -69,7 +69,7 @@ if __name__ == "__main__":
                         digit_list.append(int(digit))                
 
                 our_sudoku = Sudoku()
-                our_sudoku.solution_from_sat(digit_list)
+                our_sudoku.solution_from_output(digit_list)
                 our_time = round(end - start,6)
                 percent_diff = round(abs(zchaff_time-our_time)/zchaff_time,2)
                 result = "Our solver solved in "+str(our_time)+" seconds, "+str(percent_diff)+"% of zChaff"
@@ -84,7 +84,7 @@ if __name__ == "__main__":
             i = 0
             print("Solving with our solver")
             for path in path_list:
-                print("Sudoku #", i)
+                print("- - - Sudoku #"+str(i)+"- - -")
                 sat_sudokus[i].print()
 
                 file = open(path,'r')
@@ -107,7 +107,7 @@ if __name__ == "__main__":
                             digit_list.append(int(digit))                
 
                     our_sudoku = Sudoku()
-                    our_sudoku.solution_from_sat(digit_list)
+                    our_sudoku.solution_from_output(digit_list)
                     our_time = round(end - start,6)
                     result = "Our solver solved in "+str(our_time)+" seconds."
                     our_sudoku.print()
