@@ -131,6 +131,8 @@ The most important processes in this set of programs, and their time complexity 
 
 **simplify**: With two nested loops, it takes O(|C|x|V|) = O(C^2). This method gets called by ssat each time the set of valid variables is not empty and it depends on how many variables are per clause. Worst case is every variable is in every clause.
 
+**valid**: Verifying whether the expression is True or False given a set of variable assignments takes O(|V|), as this method calculates the 'niceness' of each variable to decide on what to do next.
+
 **ssat**: This method, firstly ignoring our optimizations, can have a worst case of having to test every variable for each clause. That would be O(2^|V| x (|V|+|C|))
 
 Keep in mind that the number of clauses and variables are:
@@ -146,5 +148,8 @@ Still, we could claim that the time complexity of our solver is as follows:
 
 	O(2 x N^6 x (N^6+N^2 + bin(N^2) x N + 3 x bin(N^2,2)x N)) 
 	
+### Authors:
 
-**valid**: Verifying whether the expression is True or False given a set of variable assignments takes O(|V|), as this method calculates the 'niceness' of each variable to decide on what to do next.
+ShonTitor (Leonardo López)
+spokerman12 (Daniel Francis)
+LuigiCamilo (Luigi DiMartino)

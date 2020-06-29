@@ -185,6 +185,7 @@ if __name__ == "__main__":
                             continue
                         else:
                             try:
+                                zchaff_sudoku = None
                                 solution = solution.split("Random Seed Used")[0]
                                 solution = solution.split("Instance Satisfiable")[1]
                                 digit_list = []
@@ -196,10 +197,10 @@ if __name__ == "__main__":
                                 zchaff_sudoku = Sudoku()
                                 zchaff_sudoku.solution_from_sat(digit_list)
                                 result = (
-                                    "zChaff solved in " + str(zchaff_time) + " seconds"
+                                    "zChaff solved in " + str(zchaff_time) + " seconds\n"
                                 )
                             except:
-                                result += "Time out. Moving on'\n'"
+                                result += "zChaff timed out. Moving on'\n'"
                                 zChaff_unsolved+=[i]
 
                         print(result)
@@ -213,7 +214,7 @@ if __name__ == "__main__":
                         end = timer()
 
                         if output == (0):
-                            result = "Time out. Moving on.\n"
+                            result = "Our solver timed out. Moving on.\n"
                             our_time = time_limit
                             ours_unsolved+=[i]
                             report_text += str(result)
@@ -255,12 +256,12 @@ if __name__ == "__main__":
                                         our_sudoku.grid[j][k]
                                         == zchaff_sudoku.grid[j][k]
                                     )
-
-                            report_text += zchaff_sudoku.print()
                             report_text += str(result)
+                        
+                        if zchaff_sudoku:
+                            report_text += zchaff_sudoku.print(to_console=True)
 
                         print(result)
-                        zchaff_sudoku.print(to_console=True)
                         our_solver_times.append(our_time)
 
                         i += 1
