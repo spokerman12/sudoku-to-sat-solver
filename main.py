@@ -2,10 +2,11 @@
 import os
 import sys
 import re
-
-import matplotlib.pyplot as plt
 import unittest
 import threading
+import traceback
+
+import matplotlib.pyplot as plt
 
 from timeit import default_timer as timer
 from Sudoku import Sudoku
@@ -60,6 +61,8 @@ if __name__ == "__main__":
                 if type(output) != type("string"):
                     result = "Time out. Moving on.\n"
                     our_time = time_limit
+                elif output is None or "s cnf 0" in output:
+                    result = "Unsatisfiable.\n"
                 else:
                     all_digits = [
                         int(x.strip("v ")) + 1 for x in re.findall("v -?\d+", output)
@@ -155,6 +158,8 @@ if __name__ == "__main__":
             #                   zChaff and our solver. Compares results and
             #                   plots them.
             elif sys.argv[1] == "compare_solvers":
+                zChaff_unsolved = []
+                ours_unsolved = []
                 report_text = ""
                 with open("report-" + sys.argv[2] + ".txt", "w") as report:
                     path_list, sat_sudokus = sudoku_to_sat(file)
@@ -175,6 +180,7 @@ if __name__ == "__main__":
                             result = (
                                 "Unsatisfiable! Time elapsed:" + str(zchaff_time) + "\n"
                             )
+                            zChaff_unsolved+=[i]
                             report_text += result
                             continue
                         else:
@@ -194,6 +200,7 @@ if __name__ == "__main__":
                                 )
                             except:
                                 result += "Time out. Moving on'\n'"
+                                zChaff_unsolved+=[i]
 
                         print(result)
                         report_text += result
@@ -208,9 +215,11 @@ if __name__ == "__main__":
                         if output == (0):
                             result = "Time out. Moving on.\n"
                             our_time = time_limit
+                            ours_unsolved+=[i]
                             report_text += str(result)
                         elif output is None or "s cnf 0" in output:
                             result = "Unsatisfiable (Or could not satisfy?)"
+                            ours_unsolved+=[i]
                         else:
                             all_digits = [
                                 int(x.strip("v ")) + 1
@@ -261,6 +270,12 @@ if __name__ == "__main__":
                     summary += (
                         "Using a time limit of " + str(time_limit) + " seconds.\n"
                     )
+                    summary += (
+                        "zChaff could not solve " + str(zChaff_unsolved) +"\n"
+                    )
+                    summary += (
+                        "Ours could not solve " + str(ours_unsolved) +"\n"
+                    )
                     for j in range(i):
                         summary += (
                             "Sudoku #"
@@ -295,3 +310,4 @@ if __name__ == "__main__":
 
     except Exception as e:
         print("Error,", e)
+        print(traceback.format_exc())
