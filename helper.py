@@ -51,6 +51,8 @@ def read_sat(s):
 
 
 def simplify(varss, clauses):
+    if len(clauses) < 500:
+        print(len(clauses))
     clauses = [i.copy() for i in clauses]
     i = 0
     while i < len(clauses):
@@ -75,7 +77,6 @@ def simplify(varss, clauses):
                     j -= 1
             j += 1
         i += 1
-    print(len(clauses))
     return clauses
 
 
@@ -151,9 +152,11 @@ def ssat(nvars, claus, vals=set(), blacklist=set()):
         values.add(v)
         clauses = simplify({v}, clauses)
         if clauses is None : return None
-            
-    # backtracking loop
+
+    # backtracking loop ##################
     while not valids.empty():
+        print('loop2') 
+        # print(valids.queue)
         v = valids.get()[1]
         if v in blacklist:
             continue
@@ -230,3 +233,8 @@ def solve_sat_timeout(s, time_limit):
             return return_dict["solve_sat"]
     except Exception as e:
         print("Error occurred,", e)
+
+
+if __name__ == '__main__':
+    file = open('sudo3.txt').read()
+    print(solve_sat(file,{}))
