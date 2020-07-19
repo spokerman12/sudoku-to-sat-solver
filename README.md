@@ -96,9 +96,9 @@ Our solver is based on the following methods:
 - Simplification: We make use of the properties of the disjunction to more easily get rid of variables, as if we are testing P, we can get rid of (T v U v J v K v P).
 
 ## How our solver compares to zChaff
-![alt text](https://github.com/spokerman12/sudoku-to-sat-solver/blob/master/comparison.png?raw=true)
+![alt text](https://github.com/spokerman12/sudoku-to-sat-solver/blob/master/new_comparison.png?raw=true)
 
-Here is a graph of how our solver fared against zChaff on all 45 Sudokus in test_input.txt using a time limit of 60s. Needless to say, if it reached 60s then it timed out.
+Here is a graph of how our solver fared against zChaff on all 45 Sudokus in test_input.txt using a time limit of 60s. Needless to say, if it reached 60s then it timed out. Check out report-test_input and oldreport files to see a more detailed summary.
 
 zChaff is a VERY fast SAT solver. Our solver could not handle a decent chunk of the problems. It requires a more detailed analysis on its code and structures.
 
