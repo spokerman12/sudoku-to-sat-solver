@@ -1,8 +1,4 @@
-import re
-import time
-
-
-import multiprocessing
+import re, time, multiprocessing
 
 from queue import PriorityQueue
 
@@ -51,6 +47,7 @@ def read_sat(s):
 
 
 def simplify(varss, clauses):
+    if clauses is None : return None
     clauses = [i.copy() for i in clauses]
     i = 0
     while i < len(clauses):
@@ -79,17 +76,22 @@ def simplify(varss, clauses):
 
 
 def valid(nvars, clauses, values) :
+    #print(len(values), len(clauses))
+    if clauses is None : return (PriorityQueue(), clauses)
+    if len(clauses) == 0 :
+        return (PriorityQueue(), clauses)
     valids = set()
     niceness = {}
     for i in range(1, nvars+1) :
         ni = -i
-        niceness[i] = None
-        niceness[ni] = None
+        niceness[i] = 0
+        niceness[ni] = 0
         if i in values or ni in values :
             continue
         valids.add(i)
         valids.add(ni)
-    
+
+    singles = set()
     for clause in clauses :
         if len(clause) == 0 : continue
         var = clause[0]
@@ -97,59 +99,49 @@ def valid(nvars, clauses, values) :
         
         if len(clause) == 1 :
             if not var in valids :
-                return PriorityQueue()
+                return (PriorityQueue(), clauses)
             if nvar in valids :
                 valids.remove(nvar)
+            singles.add(var)
 
         for v in clause :
-            if niceness[v] :
-                niceness[v] = min(niceness[v], len(clause))
-            else :
-                niceness[v] = len(clause)
+            niceness[v] -= 1
+            niceness[-v] -= (1/len(clause))
 
-    q = PriorityQueue()
-    for i in valids :
-        if niceness[i] :
-            if i < 0 and niceness[i] > 1 :
-                niceness[i] += 1
-            q.put((niceness[i], i))
-        elif i > 0 and niceness[-i] is None  :
-            values.add(i)
-    return q
-
+    if len(singles) == 0 :
+        q = PriorityQueue()
+        for i in valids :
+            #niceness[i] = min(niceness[i], niceness[-i])
+            if niceness[i] :
+                if i < 0 :
+                    #q.put((niceness[i]+nvars, i))
+                    q.put((niceness[i], i))
+                else :
+                    q.put((niceness[i], i))
+                
+            elif i > 0 and niceness[-i] is None  :
+                values.add(i)
+        return (q, clauses)
+    else :
+        for v in singles :
+            values.add(v)
+        clauses = simplify(singles, clauses)
+        v,c = valid(nvars, clauses, values)
+        return (v, c)
 
 def ssat(nvars, claus, vals=set(), blacklist=set()):
     #print(len(vals), len(claus))
-    #if len(claus) <= 20 : print(claus)
+    if len(claus) <= 20 : print(claus)
     clauses = [i.copy() for i in claus]
     values = vals.copy()
     blacklist = blacklist.copy()
-    if len(values) == nvars and len(clauses) == 0:
+    #if len(values) == nvars and len(clauses) == 0:
+    if len(values) == nvars :
         return values
     
-    valids = valid(nvars, clauses, values)
-
-    # deducting loop
-    fresh = True
-    while (not valids.empty()) and fresh :
-        
-        peek = valids.get()
-        if peek[0] == 1 :
-            v = peek[1]
-            fresh = False
-        elif fresh :
-            valids.put(peek)
-            break
-        else :
-            fresh = True
-            valids = valid(nvars, clauses, values)
-            continue
-
-        if -v in values or v in blacklist :
-            return None
-        values.add(v)
-        clauses = simplify({v}, clauses)
-        if clauses is None : return None
+    valids, clauses = valid(nvars, clauses, values)
+    if len(values) == nvars :
+        return values
             
     # backtracking loop
     while not valids.empty():
@@ -159,10 +151,10 @@ def ssat(nvars, claus, vals=set(), blacklist=set()):
         if not v in values and not -v in values:
             simple = simplify({v}, clauses)
             if simple is None :
-                #print(len(vals), "susto", v)
                 if -v in blacklist:
                     return None
                 else:
+                    valids.put((-99999,-v))
                     blacklist.add(v)
                 continue
             values.add(v)
@@ -173,9 +165,8 @@ def ssat(nvars, claus, vals=set(), blacklist=set()):
             if -v in blacklist:
                 return None
             else:
+                valids.put((-float("inf"),-v))
                 blacklist.add(v)
-    if len(values) == nvars and len(clauses) == 0:
-        return values
     return None
 
 
@@ -185,7 +176,6 @@ def verify(solution, clauses):
             if clause[i] in solution:
                 break
             if i == len(clause) - 1:
-                print(clause)
                 return False
     return True
 
@@ -195,7 +185,7 @@ def format_sat(instance):
     solution = ssat(instance[0], instance[1], set())
     #print(solution)
     if solution:
-        assert(verify(solution, instance[1]))
+        #assert(verify(solution, instance[1]))
         return (
             "s cnf 1 "
             + str(instance[0])
