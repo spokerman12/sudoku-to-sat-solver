@@ -79,13 +79,19 @@ Our solver is based on the following methods:
 
 - solve_sat_timeout: Same as solve_sat, only that it imposes a process timeout to make sure that the program finishes.
 
-## Techniques and heuristics
-
-- Niceness: Valid allows us to build a priority queue with the elements worth testing where the priority is their 'niceness'. As it gets built, the unasigned variables (which occur in no clause) that have no proposed niceness are implied as 'True'. Valid returns a priority queue; if there's a contradiction among the variables and any clause, it returns an empty queue. Basically, putting a 3 in a column's slot where that column slots' rows also have 3's is a 'nice' assignment, because 3 is more likely to be correct. 
+## Techniques
 
 - Backtracking: One of the go-to techniques to solve this problem. When testing out variable assignments, one must go back to try different paths. Basically, we're transversing a tree, and when we get to a "dead end", we go back. The branches are the many subproblems that we can find in the current input.
 
-- Blacklisting: Some variables are not worth checking for validity in a new subproblem. If a variable is 'nice' but is blacklisted, it is not considered for testing in that subproblem. 
+- Simplification: We make use of the properties of the disjunction to more easily get rid of variables, as if we are testing P, we can get rid of (T v U v J v K v P).
+
+## New Version Improvements
+
+- Bifurcation Heuristic: Valid allows us to build a priority queue with the elements worth testing where the priority is their 'niceness'. As it gets built, the unasigned variables (which occur in no clause) that have no proposed niceness are implied as 'True'. Valid returns a priority queue; if there's a contradiction among the variables and any clause, it returns an empty queue. Basically, putting a 3 in a column's slot where that column slots' rows also have 3's is a 'nice' assignment, because 3 is more likely to be correct. The niceness of a literal is the number of clauses in which it occurs plus the sum of the multiplicative inverse of the length of the clauses in which it occurs negated. Additionally, if during the backtracking it is found that a literal leads to an unsolvable SAT instance, the negation of the literal is placed on top of the priority queue. This allows the solver to discard unsatisfiable subtrees quicker.
+
+- Unitary Clause Propagation: If a clause that contains a single literal is found, the corresponding variable is assigned to the value of the literal immediately (without backtracking). Backtracking isn't necessary for these assignations because they either are correct for the current subtree or the whole subtree is unsatisfiable.
+
+- Blacklisting: If a literal has been found to lead to an unsatisfiable result for a subproblem, it is added to a 'blacklist' (implemented with a set), these literals are not worth checking for validity in the current subtree. If a literal is 'nice' but blacklisted, it is not considered for testing in that subproblem. If both a variable and its negation are blacklisted, the whole subtree is discarded.
 
 - Simplification: We make use of the properties of the disjunction to more easily get rid of variables, as if we are testing P, we can get rid of (T v U v J v K v P).
 
