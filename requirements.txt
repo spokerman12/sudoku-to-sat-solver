@@ -18,7 +18,7 @@ kiwisolver==1.2.0
 lockfile==0.12.2
 matplotlib==3.2.2
 msgpack==0.6.2
-numpy==1.18.5
+numpy==1.22.0
 packaging==20.3
 pathspec==0.8.0
 pep517==0.8.2
